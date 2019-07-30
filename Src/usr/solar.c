@@ -2,91 +2,139 @@
 #include "mini-printf.h"
 #include "solar.h"
 
-extern ADC_HandleTypeDef hadc1;
-extern UART_HandleTypeDef huart1;
-extern TIM_HandleTypeDef htim1;
-
-
 solar_struct solar;
 
-float ADC_Convert_SolarVoltage(uint16_t raw)
+uint8_t buffer[32];
+
+void solar_print_values(void)
 {
-    float scaled;
-    scaled = 3.3 / 4095.0 * (20.0 + 1.8) / 1.8 * raw;
-    return scaled;
+    snprintf((char *)buffer, 32, "\033[2J");
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "Battery Voltage: %f\r\n", solar.adc.battery_voltage);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "Battery Current: %f\r\n", solar.adc.battery_current);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "Solar Voltage: %f\r\n", solar.adc.solar_voltage);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "Solar Current: %f\r\n", solar.adc.solar_current);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "Load Current: %f\r\n", solar.adc.load_current);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "DCDC enable: %d\r\n", solar.dcdc.enable_user);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "DCDC duty: %d\r\n", solar.dcdc.duty);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "Load enable: %d\r\n", solar.load_enable);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "Error: %d\r\n", solar.error);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    //snprintf((char *)buffer, 32, "\r\n\r\n\r\n\r\n\r\n\r\n");
+    //HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 }
 
-float ADC_Convert_SolarCurrent(uint16_t raw)
+void solar_command_handler(uint8_t command)
 {
-    //ACS712 30A version 2.5V + 0.066 Volt/Amps (bi directional)
-    #define ADC_CALIB_SOLAR_CURRENT_CENTRE 1968     //ideally 2048
+    switch(command)
+    {
+        case COMMAND_DCDC_ENABLE:
+                if (solar.dcdc.enable_user)
+                    solar.dcdc.enable_user = 0;
+                else
+                    solar.dcdc.enable_user = 1;
+            break;
+            
+        case COMMAND_PWM_DOWN:
+                if(solar.dcdc.duty>0) 
+                    solar.dcdc.duty -= 100;
+            break;
 
-    float scaled;
-    scaled = (raw - ADC_CALIB_SOLAR_CURRENT_CENTRE) * 3.3 / 4095.0 * 0.066;
-    return scaled;
+        case COMMAND_PWM_UP:
+                if(solar.dcdc.duty<5000)
+                    solar.dcdc.duty += 100;
+            break;
+
+        case COMMAND_LOAD_ENABLE:
+                if (solar.load_enable)
+                    solar.load_enable = 0;
+                else
+                    solar.load_enable = 1;
+            break;
+    }
 }
 
-void GetADCValues()
-{
-    solar.solarVoltage = ADC_Convert_SolarVoltage(solar.adcRaw[0]);
-    solar.solarCurrent = ADC_Convert_SolarCurrent(solar.adcRaw[1]);
-}
 
 void solar_main(void)
 {
-    uint8_t buffer[32];
-    //solar_comm_init();
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t *)solar.adcRaw, 5);
-    HAL_TIM_Base_Start(&htim1);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+    uint8_t command;
 
-
-
-    uint16_t counter = 0;
-    uint16_t pwm_duty = 0;
-    uint8_t uart_char;
+    solar_comm_init();
+    solar_adc_init();
+    solar_dcdc_init();
+    
+    HAL_TIM_Base_Start_IT(&htim2);
 
     while(1)
     {
-        if(HAL_UART_Receive(&huart1, &uart_char, 1, 0) == HAL_OK)
+        if(solar.tick)
         {
-            if(uart_char == '1')
+            solar.tick = 0;
+            solar_adc_get_values();
+            command = solar_comm_receive();
+            solar_command_handler(command);
+
+            if (command) 
+                solar_print_values();
+
+            solar_dcdc_enable(solar.dcdc.enable_user);
+            solar_dcdc_set_duty(solar.dcdc.duty);
+            solar_load_enable(solar.load_enable);
+
+            if(solar.counter > 50)
             {
-                HAL_GPIO_TogglePin(SWITCH_SOLAR_GPIO_Port, SWITCH_SOLAR_Pin);
+                solar.counter = 0;
+                solar_print_values();
+                HAL_GPIO_TogglePin(BUILTIN_LED_GPIO_Port, BUILTIN_LED_Pin);
             }
-            else if( (uart_char == '2') || (uart_char == '3') )
-            {
-                if(uart_char == '3')
-                {
-                    pwm_duty += 100;
-                }    
-                else{
-                    pwm_duty -= 100;
-                }
-                __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm_duty);   
-                snprintf((char *)buffer, 32, "PWM Duty: %d\r\n", pwm_duty);
-                HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
-            }
-          
-
         }
-        if(++counter == 1000)
-        {
-            counter = 0;
-            GetADCValues();
-
-
-
-            snprintf((char *)buffer, 32, "Solar Voltage: %f\r\n", solar.solarVoltage);
-            HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
-
-            snprintf((char *)buffer, 32, "Solar Current: %f\r\n", solar.solarCurrent);
-            HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
-
-            HAL_GPIO_TogglePin(BUILTIN_LED_GPIO_Port, BUILTIN_LED_Pin);
-        }
-
-        HAL_Delay(1);
     }
+}
 
+void solar_load_enable(uint8_t enable)
+{
+    if (enable)
+    {
+        HAL_GPIO_WritePin(SWITCH_LOAD_GPIO_Port, SWITCH_LOAD_Pin,GPIO_PIN_RESET);
+    }   
+    else
+    {
+        HAL_GPIO_WritePin(SWITCH_LOAD_GPIO_Port, SWITCH_LOAD_Pin,GPIO_PIN_SET);
+    }
+}
+
+void solar_50Hz_callback(void)
+{
+    if(solar.tick == 1)
+    {
+        solar.error++;
+    }
+    solar.tick = 1;
+    solar.counter++;
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if(htim == &htim2)
+    {
+        solar_50Hz_callback();
+    }
 }

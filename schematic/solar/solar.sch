@@ -354,7 +354,6 @@ F 3 "http://www.irf.com/product-info/datasheets/data/irf2204.pdf" H 8850 5400 50
 $EndComp
 Wire Wire Line
 	8650 5400 8350 5400
-Connection ~ 8350 5400
 $Comp
 L power:GND #PWR?
 U 1 1 5D4746A8
@@ -373,7 +372,7 @@ Wire Wire Line
 Wire Wire Line
 	8350 5800 8350 5850
 Wire Wire Line
-	7950 5600 8050 5600
+	7950 5600 8000 5600
 Wire Wire Line
 	8350 5350 8350 5400
 $Comp
@@ -386,28 +385,6 @@ F 2 "" V 8280 5200 50  0001 C CNN
 F 3 "~" H 8350 5200 50  0001 C CNN
 	1    8350 5200
 	-1   0    0    1   
-$EndComp
-$Comp
-L Device:R R?
-U 1 1 5D44B2C7
-P 7800 5600
-F 0 "R?" V 7593 5600 50  0000 C CNN
-F 1 "10k" V 7684 5600 50  0000 C CNN
-F 2 "" V 7730 5600 50  0001 C CNN
-F 3 "~" H 7800 5600 50  0001 C CNN
-	1    7800 5600
-	0    1    1    0   
-$EndComp
-$Comp
-L beni_kicad:MMBT2222A Q?
-U 1 1 5D449D40
-P 8250 5600
-F 0 "Q?" H 8440 5646 50  0000 L CNN
-F 1 "MMBT2222A" H 8440 5555 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SOT-23" H 8450 5525 50  0001 L CIN
-F 3 "http://www.fairchildsemi.com/ds/PN/PN2222A.pdf" H 8250 5600 50  0001 L CNN
-	1    8250 5600
-	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	8500 4500 8500 4450
@@ -956,4 +933,191 @@ Wire Wire Line
 Connection ~ 7350 1750
 Wire Wire Line
 	7350 1750 8350 1750
+$Comp
+L Regulator_Linear:L7805 U?
+U 1 1 5D4064C3
+P 2000 6900
+F 0 "U?" H 2000 7142 50  0000 C CNN
+F 1 "L7805" H 2000 7051 50  0000 C CNN
+F 2 "" H 2025 6750 50  0001 L CIN
+F 3 "http://www.st.com/content/ccc/resource/technical/document/datasheet/41/4f/b3/b0/12/d4/47/88/CD00000444.pdf/files/CD00000444.pdf/jcr:content/translations/en.CD00000444.pdf" H 2000 6850 50  0001 C CNN
+	1    2000 6900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+12V #PWR?
+U 1 1 5D413631
+P 1100 6850
+F 0 "#PWR?" H 1100 6700 50  0001 C CNN
+F 1 "+12V" H 1115 7023 50  0000 C CNN
+F 2 "" H 1100 6850 50  0001 C CNN
+F 3 "" H 1100 6850 50  0001 C CNN
+	1    1100 6850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1500 6900 1700 6900
+Wire Wire Line
+	2300 6900 2400 6900
+$Comp
+L power:+5V #PWR?
+U 1 1 5D41F9A4
+P 2850 6800
+F 0 "#PWR?" H 2850 6650 50  0001 C CNN
+F 1 "+5V" H 2865 6973 50  0000 C CNN
+F 2 "" H 2850 6800 50  0001 C CNN
+F 3 "" H 2850 6800 50  0001 C CNN
+	1    2850 6800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5D42B973
+P 2000 7450
+F 0 "#PWR?" H 2000 7200 50  0001 C CNN
+F 1 "GND" H 2005 7277 50  0000 C CNN
+F 2 "" H 2000 7450 50  0001 C CNN
+F 3 "" H 2000 7450 50  0001 C CNN
+	1    2000 7450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5D4607C8
+P 1500 7100
+F 0 "C?" H 1615 7146 50  0000 L CNN
+F 1 "330nF" H 1615 7055 50  0000 L CNN
+F 2 "" H 1538 6950 50  0001 C CNN
+F 3 "~" H 1500 7100 50  0001 C CNN
+	1    1500 7100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1500 6950 1500 6900
+Connection ~ 1500 6900
+Wire Wire Line
+	2000 7200 2000 7400
+Connection ~ 2000 7400
+Wire Wire Line
+	2000 7400 2000 7450
+Wire Wire Line
+	1500 7400 2000 7400
+Wire Wire Line
+	1500 7250 1500 7400
+$Comp
+L Device:CP C?
+U 1 1 5D488975
+P 1100 7100
+F 0 "C?" H 1218 7146 50  0000 L CNN
+F 1 "10uF" H 1218 7055 50  0000 L CNN
+F 2 "" H 1138 6950 50  0001 C CNN
+F 3 "~" H 1100 7100 50  0001 C CNN
+	1    1100 7100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1500 6900 1100 6900
+Wire Wire Line
+	1100 6900 1100 6950
+Wire Wire Line
+	1100 7250 1100 7400
+Wire Wire Line
+	1100 7400 1500 7400
+Connection ~ 1500 7400
+$Comp
+L Device:C C?
+U 1 1 5D4B2A03
+P 2400 7100
+F 0 "C?" H 2515 7146 50  0000 L CNN
+F 1 "100nF" H 2515 7055 50  0000 L CNN
+F 2 "" H 2438 6950 50  0001 C CNN
+F 3 "~" H 2400 7100 50  0001 C CNN
+	1    2400 7100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2400 7250 2400 7400
+Wire Wire Line
+	2400 7400 2000 7400
+Wire Wire Line
+	2400 6950 2400 6900
+Connection ~ 2400 6900
+$Comp
+L Device:CP C?
+U 1 1 5D4C02D5
+P 2850 7100
+F 0 "C?" H 2968 7146 50  0000 L CNN
+F 1 "10uF" H 2968 7055 50  0000 L CNN
+F 2 "" H 2888 6950 50  0001 C CNN
+F 3 "~" H 2850 7100 50  0001 C CNN
+	1    2850 7100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2850 6950 2850 6900
+Wire Wire Line
+	2400 6900 2850 6900
+Connection ~ 2400 7400
+Wire Wire Line
+	2850 7250 2850 7400
+Wire Wire Line
+	2400 7400 2850 7400
+Wire Wire Line
+	2850 6900 2850 6800
+Connection ~ 2850 6900
+Wire Wire Line
+	1100 6850 1100 6900
+Connection ~ 1100 6900
+$Comp
+L Device:R R?
+U 1 1 5D51AA52
+P 8000 5400
+F 0 "R?" V 7793 5400 50  0000 C CNN
+F 1 "10k" V 7884 5400 50  0000 C CNN
+F 2 "" V 7930 5400 50  0001 C CNN
+F 3 "~" H 8000 5400 50  0001 C CNN
+	1    8000 5400
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8000 5550 8000 5600
+Connection ~ 8000 5600
+Wire Wire Line
+	8000 5600 8050 5600
+$Comp
+L power:+3.3V #PWR?
+U 1 1 5D52D570
+P 8000 5150
+F 0 "#PWR?" H 8000 5000 50  0001 C CNN
+F 1 "+3.3V" H 8015 5323 50  0000 C CNN
+F 2 "" H 8000 5150 50  0001 C CNN
+F 3 "" H 8000 5150 50  0001 C CNN
+	1    8000 5150
+	1    0    0    -1  
+$EndComp
+Connection ~ 8350 5400
+$Comp
+L beni_kicad:MMBT2222A Q?
+U 1 1 5D449D40
+P 8250 5600
+F 0 "Q?" H 8440 5646 50  0000 L CNN
+F 1 "MMBT2222A" H 8440 5555 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 8450 5525 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/PN/PN2222A.pdf" H 8250 5600 50  0001 L CNN
+	1    8250 5600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8000 5150 8000 5250
+$Comp
+L Device:R R?
+U 1 1 5D44B2C7
+P 7800 5600
+F 0 "R?" V 7593 5600 50  0000 C CNN
+F 1 "470" V 7684 5600 50  0000 C CNN
+F 2 "" V 7730 5600 50  0001 C CNN
+F 3 "~" H 7800 5600 50  0001 C CNN
+	1    7800 5600
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC

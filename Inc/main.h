@@ -62,6 +62,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define BUILTIN_LED_Pin GPIO_PIN_13
 #define BUILTIN_LED_GPIO_Port GPIOC
+#define SWITCH_LOAD_Pin GPIO_PIN_0
+#define SWITCH_LOAD_GPIO_Port GPIOB
 #define PWM_SOLAR_Pin GPIO_PIN_8
 #define PWM_SOLAR_GPIO_Port GPIOA
 #define SWITCH_SOLAR_Pin GPIO_PIN_9

@@ -2,31 +2,21 @@
 #include "solar.h"
 
 extern UART_HandleTypeDef huart1;
-uint8_t uart_char;
-
-void solar_comm_char_received(uint8_t c);
-
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
-{
-
-}
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-    uint8_t tmp = uart_char;
-    solar_comm_char_received(tmp);
-    //HAL_UART_Receive_IT(&huart1, &uart_char, 1);
-}
 
 void solar_comm_init(void)
 {
-    //HAL_UART_Receive_IT(&huart1, &uart_char, 1);
 }
 
-void solar_comm_char_received(uint8_t c)
+uint8_t solar_comm_receive(void)
 {
-    if(c == '1')
-        HAL_GPIO_TogglePin(SWITCH_SOLAR_GPIO_Port, SWITCH_SOLAR_Pin);
+    uint8_t uart_char;
+    if(HAL_UART_Receive(&huart1, &uart_char, 1, 0) == HAL_OK)
+    {
+          if(uart_char == '1') return COMMAND_DCDC_ENABLE;
+          else if(uart_char == '2') return COMMAND_PWM_DOWN;
+          else if(uart_char == '3') return COMMAND_PWM_UP;
+          else if(uart_char == '4') return COMMAND_LOAD_ENABLE;
 
-    //HAL_UART_Transmit(&huart1, "toggle\r\n",8,0xFFFF);
+    }
+    return 0;
 }
