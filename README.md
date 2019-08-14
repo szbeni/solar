@@ -1,1 +1,0 @@
-Solar panel
