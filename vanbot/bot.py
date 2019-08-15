@@ -18,6 +18,7 @@ from threading import Thread
 from motion_detector import MotionDetector
 import os
 import cv2
+from vanbottoken import VanBotToken
 
 class Bot(Thread):
     def __init__(self, token):
@@ -71,12 +72,12 @@ class Bot(Thread):
         print("Picture send:", filename)
 
 class AlarmSystem:
-    def __init__(self):
+    def __init__(self, token):
         #last alarm state
         self.alarm = False
         self.notify_alarm = True
         self.md = MotionDetector(0,30)
-        self.bot = Bot("885426852:AAGw6a6bituVbltm0VFA1Z3PW0TFhzK_AIE")
+        self.bot = Bot(token)
         self.bot.update_listener(self.new_message)
 
     def new_message(self, message):
@@ -133,7 +134,7 @@ class AlarmSystem:
         self.bot.join()
 
 if __name__ == "__main__":
-    alarmSystem = AlarmSystem()
+    alarmSystem = AlarmSystem(VanBotToken.token)
     alarmSystem.start()
 
 
