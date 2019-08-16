@@ -51,9 +51,7 @@ class Bot(Thread):
                         if self.listener is not None:
                             self.listener(update.message)
                         # Reply to the message
-                        #update.message.reply_text(update.message.text)
-                        #filename = "/home/beni/motion/test.jpeg"
-                        #update.message.reply_photo(open(filename, 'rb'))
+
             except NetworkError:
                 sleep(1)
             except Unauthorized:
@@ -62,26 +60,48 @@ class Bot(Thread):
 
         print ("Exiting telebot")
 
+    def send_text(self, text):
+        self.bot.send_message(VanBotToken.chat_id, text)
 
+    def send_document(self, filename):
+        try:
+            f = open(filename, 'rb')
+            self.bot.send_document(VanBotToken.chat_id, f)
+        except:
+            print("Error sending document: ", filename)
+        print("Document sent:", filename)
+        
     def send_picture(self, filename):
         try:
             f = open(filename, 'rb')
-            self.bot.send_photo(953799736, f)
+            self.bot.send_photo(VanBotToken.chat_id, f)
         except:
             print("Error sending photo: ", filename)
-        print("Picture send:", filename)
+        print("Picture sent:", filename)
 
 class AlarmSystem:
     def __init__(self, token):
+
         #last alarm state
         self.alarm = False
         self.notify_alarm = True
         self.md = MotionDetector(0,30)
+        self.md.update_on_alarm_handler(self.on_alarm)
         self.bot = Bot(token)
         self.bot.update_listener(self.new_message)
 
+    def on_alarm(self, alarm):
+        self.alarm = alarm
+        if self.notify_alarm:
+            if alarm:
+                print("Alarm!")
+                self.bot.send_text("Alarm!")
+                self.send_last_frame()
+            else:
+                self.bot.send_text("Alarm gone")
+                
     def new_message(self, message):
-        if message.from_user.username == 'szbeni':
+        if message.from_user.username == VanBotToken.username:
             msg = message.text.lower()
             if msg == 'get':
                 print("Get last frame command")
@@ -106,7 +126,7 @@ class AlarmSystem:
                 message.reply_text("Unknown command")
 
     def send_last_frame(self):
-            filename = '/tmp/motion.png'
+            filename = VanBotToken.photo_path
             frame = self.md.getLastFrame()
             if frame is not None:
                 cv2.imwrite(filename, frame)    
@@ -117,19 +137,8 @@ class AlarmSystem:
         self.bot.start()
         print("started")
 
-        while True:
-            alarm = self.md.alarm
-            if self.alarm != alarm:
-                self.alarm = alarm
-                if self.notify_alarm:
-                    if alarm:
-                        print("Alarm!")
-                        self.send_last_frame()
-                    else:
-                        print("Alarm gone..")
-                        
-            sleep(0.1)
-
+        while True:                 
+            sleep(1)
         self.md.join()
         self.bot.join()
 

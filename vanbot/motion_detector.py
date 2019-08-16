@@ -19,6 +19,10 @@ class MotionDetector(Thread):
         self.fgbg = cv2.createBackgroundSubtractorMOG2()
         self.cap = None
         self.alarmTimeSeconds = alarmTimeSeconds
+        self.on_alarm_handler = None
+
+    def update_on_alarm_handler(self, handler):
+        self.on_alarm_handler = handler
 
     def newFrame(self, frame):
         visualise = frame.copy()
@@ -50,13 +54,18 @@ class MotionDetector(Thread):
         elif self.motion == False:
             self.motionStarted = time()
         
+        alarm = False
         if self.motion:
             self.motionTime = time() - self.motionStarted
             if self.motionTime > self.alarmTimeSeconds:
-                self.alarm = True
+                alarm = True
         else:
             self.motionTime = 0
-            self.alarm = False
+        
+        if self.alarm != alarm:
+            self.alarm = alarm
+            if self.on_alarm_handler is not None:
+                self.on_alarm_handler(self.alarm)
 
         self.motionPrev = self.motion
         cv2.putText(visualise, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
