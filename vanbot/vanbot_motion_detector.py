@@ -3,26 +3,29 @@ import numpy as numpy
 from imutils.video import VideoStream
 import imutils
 import datetime
-from time import time, sleep
+from time import time, sleep, strftime
 from threading import Thread
-import token
+from vanbot_settings import VanBotSettings
 
-class MotionDetector(Thread):
-    def __init__(self, sourceNum=0, alarmTimeSeconds=10):
+class VanBotMotionDetector(Thread):
+    def __init__(self, name):
         super().__init__()
-        self.sourceNum = sourceNum
+        self.running = False
+
+        self.name = name
+        self.settings = VanBotSettings.webcam['inside']
         self.motionStarted = datetime.time()
         self.motion =  False
         self.motionPrev = False
-        self.alarm = False
-        self.lastFrame = None
-        self.fgbg = cv2.createBackgroundSubtractorMOG2()
-        self.cap = None
-        self.alarmTimeSeconds = alarmTimeSeconds
-        self.on_alarm_handler = None
 
-    def update_on_alarm_handler(self, handler):
-        self.on_alarm_handler = handler
+        self.alarm = False
+        self.alarm_last_check = False
+        self.alarmTimeSeconds = self.settings['alarm_time_seconds']
+
+        self.cap = None
+        self.fgbg = cv2.createBackgroundSubtractorMOG2()
+        self.lastFrame = None
+        self.videoRecorder = None
 
     def newFrame(self, frame):
         visualise = frame.copy()
@@ -64,35 +67,83 @@ class MotionDetector(Thread):
         
         if self.alarm != alarm:
             self.alarm = alarm
-            if self.on_alarm_handler is not None:
-                self.on_alarm_handler(self.alarm)
 
         self.motionPrev = self.motion
         cv2.putText(visualise, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.motionTime),(10, frame.shape[0] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.alarm),(10, frame.shape[0] - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
-        #cv2.imshow('original', visualise)
+        cv2.imshow('original', visualise)
         #cv2.imshow('gray', gray)
         #cv2.imshow('thresh', thresh)
         cv2.waitKey(30)
         self.lastFrame = visualise
 
     def openStream(self):
-        print("Open Stream: ", self.sourceNum)
+        print("Open Stream: ", self.settings['webcam_source'])
         if self.cap is not None:
             self.cap.stop()
-        self.cap = VideoStream(src=self.sourceNum).start()
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.settings['resolution'][0])
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.settings['resolution'][1])
+        self.cap.set(cv2.CAP_PROP_FPS,self.settings['framerate'])
 
     def closeStream(self):
         if self.cap is not None:
-            self.cap.stop()
+            self.cap.release()
+
+    def start_recording(self, filename=None):
+        if filename is None:
+            filename = self.settings['video_filename'] + strftime("%Y%m%d_%H%M%S") + '.mp4'
+
+        if self.videoRecorder is None:
+            self.videoRecorderStop = False
+
+            self.videoFilename = filename
+            self.videoRecorder = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('m','p','4','v'), self.settings['rec_framerate'], self.settings['rec_resolution'])
+            print("Started recoding {0}".format(filename))
+            return filename
+
+        return None
+
+    def stop_recording(self):
+        if self.videoRecorder is not None:
+            self.videoRecorderStop = True
+            print("Stopped recoding {0}".format(self.videoFilename))
+            return self.videoFilename
+        return None
+
+    def save_picture(self, filename=None):
+        if filename is None:
+            filename = self.settings['photo_filename']
+        if self.lastFrame is not None:
+            cv2.imwrite(filename, self.lastFrame)
+            return filename
+
+        return None            
+
+    def check_alarm_changed(self):
+        if self.alarm_last_check != self.alarm:
+            self.alarm_last_check = self.alarm
+            return self.alarm
+        return None
+
+    def stop(self):
+        self.running = False
 
     def run(self):
+        self.running = True
         self.openStream()
-        while True:
-            frame = self.cap.read()
-            if frame is not None:
+        while self.running:
+            ret, frame = self.cap.read()
+            if ret:
+                if self.videoRecorder is not None:
+                    if self.videoRecorderStop:
+                        self.videoRecorderStop = True
+                        self.videoRecorder.release()
+                        self.videoRecorder = None
+                    else:
+                        self.videoRecorder.write(frame)
                 self.newFrame(frame)
             else:
                 self.cap.stop()
@@ -110,6 +161,11 @@ class MotionDetector(Thread):
 
 
 if __name__ == "__main__":
-    md = MotionDetector()
+    md = VanBotMotionDetector('inside')
     md.start()
+    md.start_recording()
+    sleep(3)
+    md.stop_recording()
+    sleep(1)
+    md.stop()
     md.join()

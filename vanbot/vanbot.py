@@ -15,16 +15,17 @@ import telegram
 from telegram.error import NetworkError, Unauthorized
 from time import sleep
 from threading import Thread
-from motion_detector import MotionDetector
 import os
 import cv2
-from vanbottoken import VanBotToken
+from vanbot_motion_detector import VanBotMotionDetector
+from vanbot_settings import VanBotSettings
+
 
 class Bot(Thread):
-    def __init__(self, token):
+    def __init__(self):
         super().__init__()
         # Telegram Bot Authorization Token
-        self.bot = telegram.Bot(token)
+        self.bot = telegram.Bot(VanBotSettings.token)
 
         # get the first pending update_id, this is so we can skip over it in case
         # we get an "Unauthorized" exception.
@@ -41,7 +42,6 @@ class Bot(Thread):
         self.listener = listener
 
     def run(self):
-        print ("Starting telebot")
         while True:
             try:
                 for update in self.bot.get_updates(offset=self.update_id, timeout=10):
@@ -58,15 +58,14 @@ class Bot(Thread):
                 # The user has removed or blocked the bot.
                 self.update_id += 1
 
-        print ("Exiting telebot")
 
     def send_text(self, text):
-        self.bot.send_message(VanBotToken.chat_id, text)
+        self.bot.send_message(VanBotSettings.chat_id, text)
 
     def send_document(self, filename):
         try:
             f = open(filename, 'rb')
-            self.bot.send_document(VanBotToken.chat_id, f)
+            self.bot.send_document(VanBotSettings.chat_id, f)
         except:
             print("Error sending document: ", filename)
         print("Document sent:", filename)
@@ -74,43 +73,45 @@ class Bot(Thread):
     def send_picture(self, filename):
         try:
             f = open(filename, 'rb')
-            self.bot.send_photo(VanBotToken.chat_id, f)
+            self.bot.send_photo(VanBotSettings.chat_id, f)
         except:
             print("Error sending photo: ", filename)
         print("Picture sent:", filename)
 
 class AlarmSystem:
-    def __init__(self, token):
-
+    def __init__(self):
         #last alarm state
         self.alarm = False
         self.notify_alarm = True
-        self.md = MotionDetector(0,30)
-        self.md.update_on_alarm_handler(self.on_alarm)
-        self.bot = Bot(token)
+        self.md = VanBotMotionDetector('inside')
+        self.bot = Bot()
         self.bot.update_listener(self.new_message)
+        self.lastFilename = '/home/beni/workspace/solar/vanbot/output.txt'
 
-    def on_alarm(self, alarm):
-        self.alarm = alarm
+    def on_alarm(self, alarm, name):
         if self.notify_alarm:
             if alarm:
-                print("Alarm!")
-                self.bot.send_text("Alarm!")
+                self.bot.send_text("Alarm from camera '{0}'".format(name))
                 self.send_last_frame()
             else:
-                self.bot.send_text("Alarm gone")
-                
+                self.bot.send_text("Alarm gone from camera {0}".format(name))
+
+
     def new_message(self, message):
-        if message.from_user.username == VanBotToken.username:
-            msg = message.text.lower()
+        if message.from_user.username == VanBotSettings.username:
+            try:
+                msg = message.text.lower()
+            except:
+                print("Not a text message")
+                msg = ""
+
             if msg == 'get':
-                print("Get last frame command")
                 self.send_last_frame()
             elif msg.startswith('set alarm time'):
                 try:
                     t = int(msg.replace('set alarm time',''))
                     self.md.alarmTimeSeconds = t
-                    message.reply_text("Alarm time set: " + str(t))
+                    message.reply_text("Alarm time set: {0}".format(t))
                 except:
                     message.reply_text("Command error")
 
@@ -122,28 +123,49 @@ class AlarmSystem:
                 self.notify_alarm = False
                 message.reply_text("Alarm is Off")
 
+            elif msg == 'rec start':
+                filename = self.md.start_recording()
+                if filename is not None:
+                    self.lastFilename = filename
+                    message.reply_text("Recording started: {0}".format(filename))
+                else:
+                    message.reply_text("Start recording FAILED")
+
+            elif msg == 'rec stop':
+                filename = self.md.stop_recording()
+                if filename is not None:
+                    self.lastFilename = filename
+                    message.reply_text("Recording stopped: {0}".format(filename))
+                else:
+                    message.reply_text("Stop recording FAILED")
+
+            elif msg == 'rec send':
+                if self.lastFilename is not None:
+                    print("Sending file: {0}".format(self.lastFilename))
+                    message.reply_document(open(self.lastFilename,'rb'), filename=self.lastFilename)
+
             else:
                 message.reply_text("Unknown command")
 
     def send_last_frame(self):
-            filename = VanBotToken.photo_path
-            frame = self.md.getLastFrame()
-            if frame is not None:
-                cv2.imwrite(filename, frame)    
+            filename = self.md.save_picture()
+            if filename is not None:
                 self.bot.send_picture(filename)
 
     def start(self):
         self.md.start()
         self.bot.start()
-        print("started")
+        while True:
+            changed = self.md.check_alarm_changed()
+            if changed is not None:
+                self.on_alarm(changed, self.md.name)
 
-        while True:                 
-            sleep(1)
+            sleep(0.1)  
         self.md.join()
         self.bot.join()
 
 if __name__ == "__main__":
-    alarmSystem = AlarmSystem(VanBotToken.token)
+    alarmSystem = AlarmSystem()
     alarmSystem.start()
 
 
