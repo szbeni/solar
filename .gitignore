@@ -105,4 +105,4 @@ venv.bak/
 
 *.lib
 
-vanbotsettings.py
+vanbot_settings.py
