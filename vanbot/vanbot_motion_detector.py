@@ -73,7 +73,7 @@ class VanBotMotionDetector(Thread):
         cv2.putText(visualise, str(self.motionTime),(10, frame.shape[0] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.alarm),(10, frame.shape[0] - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
-        cv2.imshow('original', visualise)
+        #cv2.imshow('original', visualise)
         #cv2.imshow('gray', gray)
         #cv2.imshow('thresh', thresh)
         cv2.waitKey(30)
