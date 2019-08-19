@@ -73,7 +73,7 @@ class VanBotMotionDetector(Thread):
         cv2.putText(visualise, str(self.motionTime),(10, frame.shape[0] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.alarm),(10, frame.shape[0] - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
-        #cv2.imshow('original', visualise)
+        #   cv2.imshow('original', visualise)
         #cv2.imshow('gray', gray)
         #cv2.imshow('thresh', thresh)
         cv2.waitKey(30)
@@ -82,7 +82,9 @@ class VanBotMotionDetector(Thread):
     def openStream(self):
         print("Open Stream: ", self.settings['webcam_source'])
         if self.cap is not None:
-            self.cap.stop()
+            self.cap.release()
+            self.cap = None
+            
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.settings['resolution'][0])
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.settings['resolution'][1])
@@ -91,6 +93,7 @@ class VanBotMotionDetector(Thread):
     def closeStream(self):
         if self.cap is not None:
             self.cap.release()
+            self.cap = None
 
     def start_recording(self, filename=None):
         if filename is None:
