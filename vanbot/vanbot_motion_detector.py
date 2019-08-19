@@ -146,7 +146,7 @@ class VanBotMotionDetector(Thread):
                         self.videoRecorder.write(frame)
                 self.newFrame(frame)
             else:
-                self.cap.stop()
+                self.closeStream()
                 print("Camera disconnected..retry in 5 seconds")
                 sleep(5)
                 self.openStream()
