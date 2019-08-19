@@ -4,6 +4,8 @@
 """
 python-telegram-bot
 imutils
+pysftp
+
 
 Simple Bot to reply to Telegram messages.
 This is built on the API wrapper, see echobot2.py to see the same example built

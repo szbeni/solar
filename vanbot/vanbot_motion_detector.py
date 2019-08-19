@@ -60,7 +60,9 @@ class VanBotMotionDetector(Thread):
                 self.motionStarted = now
                 self.motionStopped = now
             else:
-                
+                self.motionStopped = now
+
+
         alarm = False
         if self.motion:
             self.motionStopped = now
@@ -78,7 +80,7 @@ class VanBotMotionDetector(Thread):
         if self.alarm != alarm:
             self.alarm = alarm
 
-        
+
         cv2.putText(visualise, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.motionTime),(10, frame.shape[0] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.alarm),(10, frame.shape[0] - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
@@ -95,7 +97,7 @@ class VanBotMotionDetector(Thread):
         if self.cap is not None:
             self.cap.release()
             self.cap = None
-            
+
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.settings['resolution'][0])
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.settings['resolution'][1])
