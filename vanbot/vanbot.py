@@ -19,6 +19,7 @@ import os
 import cv2
 from vanbot_motion_detector import VanBotMotionDetector
 from vanbot_settings import VanBotSettings
+from vanbot_file_upload import VanBotFileUpload
 
 
 class Bot(Thread):
@@ -82,19 +83,39 @@ class AlarmSystem:
     def __init__(self):
         #last alarm state
         self.alarm = False
-        self.notify_alarm = True
+        self.notify_alarm = False
         self.md = VanBotMotionDetector('inside')
         self.bot = Bot()
         self.bot.update_listener(self.new_message)
         self.lastFilename = '/home/beni/workspace/solar/vanbot/output.txt'
+        self.uploader = VanBotFileUpload(VanBotSettings.upload_settings)
 
     def on_alarm(self, alarm, name):
         if self.notify_alarm:
             if alarm:
                 self.bot.send_text("Alarm from camera '{0}'".format(name))
-                self.send_last_frame()
+                filename = self.send_last_frame()
+                if filename:
+                    self.uploader.upload(filename)
+                self.md.start_recording()
             else:
                 self.bot.send_text("Alarm gone from camera {0}".format(name))
+                filename = self.md.stop_recording()
+                if filename:
+                    self.uploader.upload(filename)
+
+
+    def start_recording(self, md, message=None):
+        filename = md.start_recording()
+        if filename is not None:
+            self.lastFilename = filename
+        return filename
+
+    def stop_recording(self, md, message=None):
+            filename = md.stop_recording()
+            if filename is not None:
+                self.lastFilename = filename
+            return filename
 
 
     def new_message(self, message):
@@ -117,24 +138,22 @@ class AlarmSystem:
 
             elif msg == 'alarm on':
                 self.notify_alarm = True
-                message.reply_text("Alarm is On")
+                message.reply_text("Alarm is On")                
 
             elif msg == 'alarm off':
                 self.notify_alarm = False
                 message.reply_text("Alarm is Off")
 
             elif msg == 'rec start':
-                filename = self.md.start_recording()
+                filename = self.start_recording(self.md)
                 if filename is not None:
-                    self.lastFilename = filename
                     message.reply_text("Recording started: {0}".format(filename))
                 else:
                     message.reply_text("Start recording FAILED")
 
             elif msg == 'rec stop':
-                filename = self.md.stop_recording()
+                filename  = self.stop_recording(self.md)
                 if filename is not None:
-                    self.lastFilename = filename
                     message.reply_text("Recording stopped: {0}".format(filename))
                 else:
                     message.reply_text("Stop recording FAILED")
@@ -151,16 +170,22 @@ class AlarmSystem:
             filename = self.md.save_picture()
             if filename is not None:
                 self.bot.send_picture(filename)
+            return filename
+
 
     def start(self):
         self.md.start()
         self.bot.start()
+        self.uploader.start()
+        self.bot.send_text("VanBot started")
         while True:
             changed = self.md.check_alarm_changed()
             if changed is not None:
                 self.on_alarm(changed, self.md.name)
 
-            sleep(0.1)  
+            sleep(0.1) 
+        self.bot.send_text("VanBot stopped")
+        self.uploader.stop()
         self.md.join()
         self.bot.join()
 

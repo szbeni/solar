@@ -14,13 +14,15 @@ class VanBotMotionDetector(Thread):
 
         self.name = name
         self.settings = VanBotSettings.webcam['inside']
-        self.motionStarted = datetime.time()
+        self.motionStarted = 0
+        self.motionStopped = 0
         self.motion =  False
         self.motionPrev = False
 
         self.alarm = False
         self.alarm_last_check = False
         self.alarmTimeSeconds = self.settings['alarm_time_seconds']
+        self.alarmMinDuration = self.settings['min_alarm_duration']
 
         self.cap = None
         self.fgbg = cv2.createBackgroundSubtractorMOG2()
@@ -50,30 +52,39 @@ class VanBotMotionDetector(Thread):
         else:
             self.motion = False
 
-
-        if self.motion == True and self.motionPrev == False:
-            self.motionStarted = time()
-        
-        elif self.motion == False:
-            self.motionStarted = time()
-        
+        now = time()
+        #if motion has started
+        if self.motion != self.motionPrev:
+            self.motionPrev = self.motion
+            if self.motion:
+                self.motionStarted = now
+                self.motionStopped = now
+            else:
+                
         alarm = False
         if self.motion:
+            self.motionStopped = now
             self.motionTime = time() - self.motionStarted
             if self.motionTime > self.alarmTimeSeconds:
                 alarm = True
         else:
             self.motionTime = 0
-        
+
+        timeSinceMotionStopped = now - self.motionStopped
+        if self.alarm:
+            if timeSinceMotionStopped < self.alarmMinDuration:
+                alarm = True
+
         if self.alarm != alarm:
             self.alarm = alarm
 
-        self.motionPrev = self.motion
+        
         cv2.putText(visualise, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),(10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.motionTime),(10, frame.shape[0] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
         cv2.putText(visualise, str(self.alarm),(10, frame.shape[0] - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(visualise, str(timeSinceMotionStopped),(10, frame.shape[0] - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
-        #   cv2.imshow('original', visualise)
+        #cv2.imshow('original', visualise)
         #cv2.imshow('gray', gray)
         #cv2.imshow('thresh', thresh)
         cv2.waitKey(30)
@@ -118,7 +129,7 @@ class VanBotMotionDetector(Thread):
 
     def save_picture(self, filename=None):
         if filename is None:
-            filename = self.settings['photo_filename']
+            filename = self.settings['photo_filename']  + strftime("%Y%m%d_%H%M%S") + '.png'
         if self.lastFrame is not None:
             cv2.imwrite(filename, self.lastFrame)
             return filename
