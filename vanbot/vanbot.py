@@ -140,10 +140,12 @@ class AlarmSystem:
 
             elif msg == 'alarm on':
                 self.notify_alarm = True
-                message.reply_text("Alarm is On")                
+                self.md.alarm_on()
+                message.reply_text("Alarm is On")
 
             elif msg == 'alarm off':
                 self.notify_alarm = False
+                self.md.alarm_off()
                 message.reply_text("Alarm is Off")
 
             elif msg == 'rec start':

@@ -19,6 +19,7 @@ class VanBotMotionDetector(Thread):
         self.motion =  False
         self.motionPrev = False
 
+        self.alarm_enabled = False
         self.alarm = False
         self.alarm_last_check = False
         self.alarmTimeSeconds = self.settings['alarm_time_seconds']
@@ -28,6 +29,12 @@ class VanBotMotionDetector(Thread):
         self.fgbg = cv2.createBackgroundSubtractorMOG2()
         self.lastFrame = None
         self.videoRecorder = None
+
+    def alarm_on(self):
+        self.alarm_enabled = True
+
+    def alarm_off(self):
+        self.alarm_enabled = False
 
     def newFrame(self, frame):
         visualise = frame.copy()
@@ -76,6 +83,9 @@ class VanBotMotionDetector(Thread):
         if self.alarm:
             if timeSinceMotionStopped < self.alarmMinDuration:
                 alarm = True
+
+        if self.alarm_enabled == False:
+            alarm = False
 
         if self.alarm != alarm:
             self.alarm = alarm
