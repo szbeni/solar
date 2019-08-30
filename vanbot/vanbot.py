@@ -23,6 +23,7 @@ import cv2
 from vanbot_motion_detector import VanBotMotionDetector
 from vanbot_settings import VanBotSettings
 from vanbot_file_upload import VanBotFileUpload
+from vanbot_http_streamer import VanBotHTTPStreamer
 
 
 class Bot(Thread):
@@ -87,6 +88,7 @@ class AlarmSystem:
         #last alarm state
         self.notify_alarm = False
         self.md = VanBotMotionDetector('inside')
+        self.streamer = VanBotHTTPStreamer(VanBotSettings.http_streamer)
         self.bot = Bot()
         self.bot.update_listener(self.new_message)
         self.lastFilename = '/home/beni/workspace/solar/vanbot/output.txt'
@@ -183,6 +185,10 @@ class AlarmSystem:
         self.md.start()
         self.bot.start()
         self.uploader.start()
+        
+        self.streamer.start()
+        self.md.register_new_frame_callback(self.streamer.on_new_frame)
+
         self.bot.send_text("VanBot started")
         while True:
             changed = self.md.check_alarm_changed()
@@ -190,10 +196,14 @@ class AlarmSystem:
                 self.on_alarm(changed, self.md.name)
 
             sleep(0.1) 
+        
         self.bot.send_text("VanBot stopped")
         self.uploader.stop()
+        self.md.stop()
+
         self.md.join()
         self.bot.join()
+        self.streamer.join()
 
 if __name__ == "__main__":
     alarmSystem = AlarmSystem()

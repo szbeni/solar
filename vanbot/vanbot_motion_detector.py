@@ -20,6 +20,7 @@ class VanBotMotionDetector(Thread):
         self.motion =  False
         self.motionPrev = False
         self.frame_prev = None
+        self.on_new_frame_callback = None
 
         self.alarm_enabled = False
         self.alarm = False
@@ -31,6 +32,9 @@ class VanBotMotionDetector(Thread):
         self.fgbg = cv2.createBackgroundSubtractorMOG2()
         self.lastFrame = None
         self.videoRecorder = None
+
+    def register_new_frame_callback(self, f):
+        self.on_new_frame_callback = f
 
     def alarm_on(self):
         self.alarm_enabled = True
@@ -77,7 +81,6 @@ class VanBotMotionDetector(Thread):
 
 
     def newFrame(self, frame):
-
         visualise = frame.copy()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         if self.frame_prev is None:
@@ -171,6 +174,9 @@ class VanBotMotionDetector(Thread):
         self.lastFrame = visualise
         self.frame_prev = gray_blurred.copy()
 
+        if self.on_new_frame_callback is not None:
+            self.on_new_frame_callback(self.lastFrame)
+
     def openStream(self):
         print("Open Stream: ", self.settings['webcam_source'])
         if self.cap is not None:
@@ -256,11 +262,12 @@ class VanBotMotionDetector(Thread):
 
 
 if __name__ == "__main__":
-    md = VanBotMotionDetector('inside', display=True)
-    md.start()
+    #md = VanBotMotionDetector('inside', display=True)
+    #md.start()
     #md.start_recording()
     #sleep(3)
     #md.stop_recording()
     #sleep(1)
     #md.stop()
-    md.join()
+    #md.join()
+    pass

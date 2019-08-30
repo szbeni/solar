@@ -25,3 +25,7 @@ class VanBotSettings:
         'remote_directory': '/remote/dir/'
 
     }
+    http_streamer = {
+        'host': '0.0.0.0',
+        'port': 8000
+    }
