@@ -5,6 +5,7 @@
 python-telegram-bot
 imutils
 pysftp
+opencv-python
 
 
 Simple Bot to reply to Telegram messages.
