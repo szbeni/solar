@@ -85,7 +85,6 @@ class Bot(Thread):
 class AlarmSystem:
     def __init__(self):
         #last alarm state
-        self.alarm = False
         self.notify_alarm = False
         self.md = VanBotMotionDetector('inside')
         self.bot = Bot()
@@ -94,20 +93,22 @@ class AlarmSystem:
         self.uploader = VanBotFileUpload(VanBotSettings.upload_settings)
 
     def on_alarm(self, alarm, name):
-        if self.notify_alarm:
             if alarm:
-                self.bot.send_text("Alarm from camera '{0}'".format(name))
-                filename = self.send_last_frame()
-                if filename:
-                    self.uploader.upload(filename)
-                self.md.start_recording()
+                if self.notify_alarm:
+                    self.alarm = True 
+                    self.bot.send_text("Alarm from camera '{0}'".format(name))
+                    filename = self.send_last_frame()
+                    if filename:
+                        self.uploader.upload(filename)
+                    self.md.start_recording()
             else:
-                self.bot.send_text("Alarm gone from camera {0}".format(name))
-                filename = self.md.stop_recording()
-                if filename:
-                    self.uploader.upload(filename)
-
-
+                if self.alarm:
+                    self.alarm = False
+                    self.bot.send_text("Alarm gone from camera {0}".format(name))
+                    filename = self.md.stop_recording()
+                    if filename:
+                        self.uploader.upload(filename)
+                        
     def start_recording(self, md, message=None):
         filename = md.start_recording()
         if filename is not None:
