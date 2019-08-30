@@ -9,6 +9,7 @@ class VanBotSettings:
                 'inside':  {
                     'alarm_time_seconds': 5,
                     'min_alarm_duration': 5,
+                    'min_motion_area': 300,
                     'photo_filename': '/tmp/vanbot_photo_inside',
                     'video_filename': '/tmp/vanbot_rec_inside',
                     'rec_resolution': (640, 480),

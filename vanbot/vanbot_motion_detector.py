@@ -27,6 +27,8 @@ class VanBotMotionDetector(Thread):
         self.alarm_last_check = False
         self.alarmTimeSeconds = self.settings['alarm_time_seconds']
         self.alarmMinDuration = self.settings['min_alarm_duration']
+        self.minMotionArea = self.settings['min_motion_area']
+
 
         self.cap = None
         self.fgbg = cv2.createBackgroundSubtractorMOG2()
@@ -52,7 +54,7 @@ class VanBotMotionDetector(Thread):
         for c in contours:
 
             # if the contour is too small, ignore it
-            if cv2.contourArea(c) < 500:
+            if cv2.contourArea(c) < self.minMotionArea:
                     continue
 
             # contour data
@@ -110,7 +112,7 @@ class VanBotMotionDetector(Thread):
         
         contourFound = False
         for c in cnts[1]:
-            if cv2.contourArea(c) < 1000:
+            if cv2.contourArea(c) < self.minMotionArea:
                 continue
             (x, y, w, h) = cv2.boundingRect(c)
             cv2.rectangle(visualise, (x, y), (x + w, y + h), (0, 255, 0), 2)
