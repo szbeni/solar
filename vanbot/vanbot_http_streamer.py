@@ -10,7 +10,7 @@ class VanBotHTTPStreamer(Thread):
         self.running = False
         self.settings = settings
 
-        self.app = Flask("Vanbot")
+        self.app = Flask("Vanbot", template_folder=self.settings['template_folder'])
         self.app.add_url_rule("/", view_func=self.index)
         self.app.add_url_rule("/video_feed", view_func=self.video_feed)
         self.new_frame = False

@@ -27,5 +27,6 @@ class VanBotSettings:
     }
     http_streamer = {
         'host': '0.0.0.0',
-        'port': 8000
+        'port': 8000,
+        'template_folder': '/home/beni/solar/vanbot/templates'
     }
