@@ -84,6 +84,16 @@ class Bot(Thread):
         print("Picture sent:", filename)
 
 class AlarmSystem:
+    commamds = [
+        {'name': 'get', 'description':'Get snapshot of the videos'},
+        {'name': 'alarm on', 'description':'Switch alarm on'},
+        {'name': 'alarm off', 'description':'Switch alarm off'},
+        {'name': 'rec start', 'description':'Start video recording'},
+        {'name': 'rec stop', 'description':'Stop video recording'},
+        {'name': 'rec send', 'description':'Send last recorded video, doesnt work'},
+        {'name': 'help', 'description':'Display help'},
+    ]
+
     def __init__(self):
         #last alarm state
         self.notify_alarm = False
@@ -91,7 +101,7 @@ class AlarmSystem:
         self.streamer = VanBotHTTPStreamer(VanBotSettings.http_streamer)
         self.bot = Bot()
         self.bot.update_listener(self.new_message)
-        self.lastFilename = '/home/beni/workspace/solar/vanbot/output.txt'
+        self.lastFilename = None
         self.uploader = VanBotFileUpload(VanBotSettings.upload_settings)
 
     def on_alarm(self, alarm, name):
@@ -122,6 +132,7 @@ class AlarmSystem:
             if filename is not None:
                 self.lastFilename = filename
             return filename
+
 
 
     def new_message(self, message):
@@ -170,6 +181,12 @@ class AlarmSystem:
                 if self.lastFilename is not None:
                     print("Sending file: {0}".format(self.lastFilename))
                     message.reply_document(open(self.lastFilename,'rb'), filename=self.lastFilename)
+
+            elif msg == 'help':
+                s = "Available commands:\n"
+                for cmd in self.commamds:
+                    s += "{0} - {1}\n".format(cmd['name'], cmd['description'])
+                message.reply_text(s)
 
             else:
                 message.reply_text("Unknown command")
