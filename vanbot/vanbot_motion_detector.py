@@ -14,7 +14,7 @@ class VanBotMotionDetector(Thread):
 
         self.display = display
         self.name = name
-        self.settings = VanBotSettings.webcam['inside']
+        self.settings = VanBotSettings.webcam[self.name]
         self.motionStarted = 0
         self.motionStopped = 0
         self.motion =  False
@@ -264,12 +264,23 @@ class VanBotMotionDetector(Thread):
 
 
 if __name__ == "__main__":
-    md = VanBotMotionDetector('inside', display=True)
-    md.start()
-    #md.start_recording()
-    #sleep(3)
-    #md.stop_recording()
-    #sleep(1)
-    #md.stop()
-    md.join()
+    md1 = VanBotMotionDetector('outside', display=True)
+    #md2 = VanBotMotionDetector('outside', display=True)
+
+    md1.start()
+    #md2.start()
+    
+    md1.start_recording()
+    #md2.start_recording()
+
+    sleep(3)
+
+    md1.stop_recording()
+    #md2.stop_recording()
+
+    md1.stop()
+    #md2.stop()
+
+    md1.join()
+    #md2.join()
     pass
