@@ -185,7 +185,7 @@ class VanBotMotionDetector(Thread):
             self.cap.release()
             self.cap = None
 
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(self.settings['webcam_source'])
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,self.settings['resolution'][0])
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT,self.settings['resolution'][1])
         self.cap.set(cv2.CAP_PROP_FPS,self.settings['framerate'])
@@ -264,12 +264,12 @@ class VanBotMotionDetector(Thread):
 
 
 if __name__ == "__main__":
-    #md = VanBotMotionDetector('inside', display=True)
-    #md.start()
+    md = VanBotMotionDetector('inside', display=True)
+    md.start()
     #md.start_recording()
     #sleep(3)
     #md.stop_recording()
     #sleep(1)
     #md.stop()
-    #md.join()
+    md.join()
     pass

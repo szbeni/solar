@@ -97,7 +97,13 @@ class AlarmSystem:
     def __init__(self):
         #last alarm state
         self.notify_alarm = False
-        self.md = VanBotMotionDetector('inside')
+        self.md_in = VanBotMotionDetector('inside')
+        self.md_out = VanBotMotionDetector('outside')
+
+        self.md = []
+        self.md.append(self.md_in)
+        self.md.append(self.md_out)
+
         self.streamer = VanBotHTTPStreamer(VanBotSettings.http_streamer)
         self.bot = Bot()
         self.bot.update_listener(self.new_message)
@@ -109,17 +115,22 @@ class AlarmSystem:
                 if self.notify_alarm:
                     self.alarm = True 
                     self.bot.send_text("Alarm from camera '{0}'".format(name))
-                    filename = self.send_last_frame()
-                    if filename:
-                        self.uploader.upload(filename)
-                    self.md.start_recording()
+                    filenames = self.send_last_frame()
+                    for filename in filenames:
+                        if filename:
+                            self.uploader.upload(filename)
+                    
+                    for md in self.md:
+                        md.start_recording()
+                    
             else:
                 if self.alarm:
                     self.alarm = False
                     self.bot.send_text("Alarm gone from camera {0}".format(name))
-                    filename = self.md.stop_recording()
-                    if filename:
-                        self.uploader.upload(filename)
+                    for md in self.md:
+                        filename = md.stop_recording()
+                        if filename:
+                            self.uploader.upload(filename)
                         
     def start_recording(self, md, message=None):
         filename = md.start_recording()
@@ -148,34 +159,39 @@ class AlarmSystem:
             elif msg.startswith('set alarm time'):
                 try:
                     t = int(msg.replace('set alarm time',''))
-                    self.md.alarmTimeSeconds = t
+                    for md in self.md:
+                        md.alarmTimeSeconds = t
                     message.reply_text("Alarm time set: {0}".format(t))
                 except:
                     message.reply_text("Command error")
 
             elif msg == 'alarm on':
                 self.notify_alarm = True
-                self.md.alarm_on()
+                for md in self.md:
+                    md.alarm_on()
                 message.reply_text("Alarm is On")
 
             elif msg == 'alarm off':
                 self.notify_alarm = False
-                self.md.alarm_off()
+                for md in self.md:
+                    md.alarm_off()
                 message.reply_text("Alarm is Off")
 
             elif msg == 'rec start':
-                filename = self.start_recording(self.md)
-                if filename is not None:
-                    message.reply_text("Recording started: {0}".format(filename))
-                else:
-                    message.reply_text("Start recording FAILED")
+                for md in self.md:
+                    filename = self.start_recording(md)
+                    if filename is not None:
+                        message.reply_text("Recording started: {0}".format(filename))
+                    else:
+                        message.reply_text("Start recording FAILED")
 
             elif msg == 'rec stop':
-                filename  = self.stop_recording(self.md)
-                if filename is not None:
-                    message.reply_text("Recording stopped: {0}".format(filename))
-                else:
-                    message.reply_text("Stop recording FAILED")
+                for md in self.md:
+                    filename  = self.stop_recording(md)
+                    if filename is not None:
+                        message.reply_text("Recording stopped: {0}".format(filename))
+                    else:
+                        message.reply_text("Stop recording FAILED")
 
             elif msg == 'rec send':
                 if self.lastFilename is not None:
@@ -192,33 +208,42 @@ class AlarmSystem:
                 message.reply_text("Unknown command")
 
     def send_last_frame(self):
-            filename = self.md.save_picture()
+        filenames = []
+        for md in self.md:
+            filename = md.save_picture()
             if filename is not None:
                 self.bot.send_picture(filename)
-            return filename
+            filenames.append(filename)
+        return filenames  
 
 
     def start(self):
-        self.md.start()
+        for md in self.md:
+            md.start()
         self.bot.start()
         self.uploader.start()
         
         self.streamer.start()
-        self.md.register_new_frame_callback(self.streamer.on_new_frame)
+        
+        #TODO check all cameras
+        self.md_in.register_new_frame_callback(self.streamer.on_new_frame)
 
         self.bot.send_text("VanBot started")
         while True:
-            changed = self.md.check_alarm_changed()
+            changed = self.md_in.check_alarm_changed()
             if changed is not None:
-                self.on_alarm(changed, self.md.name)
+                self.on_alarm(changed, self.md_in.name)
 
             sleep(0.1) 
         
         self.bot.send_text("VanBot stopped")
         self.uploader.stop()
-        self.md.stop()
+        for md in self.md:
+            md.stop()
 
-        self.md.join()
+        for md in self.md:
+            md.join()
+
         self.bot.join()
         self.streamer.join()
 
