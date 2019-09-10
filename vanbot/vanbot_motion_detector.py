@@ -246,7 +246,12 @@ class VanBotMotionDetector(Thread):
                         self.videoRecorder.release()
                         self.videoRecorder = None
                     else:
-                        self.videoRecorder.write(frame)
+                        framesize = (frame.shape[0], frame.shape[1])
+                        if framesize != self.settings['rec_resolution']:
+                            resized = cv2.resize(frame, self.settings['rec_resolution'], interpolation = cv2.INTER_AREA)
+                            self.videoRecorder.write(resized)
+                        else:
+                            self.videoRecorder.write(frame)
                 self.newFrame(frame)
             else:
                 self.closeStream()
@@ -264,7 +269,7 @@ class VanBotMotionDetector(Thread):
 
 
 if __name__ == "__main__":
-    md1 = VanBotMotionDetector('outside', display=True)
+    md1 = VanBotMotionDetector('inside', display=True)
     #md2 = VanBotMotionDetector('outside', display=True)
 
     md1.start()
