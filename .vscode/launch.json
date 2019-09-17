@@ -9,10 +9,23 @@
             "request": "launch",
             "servertype": "stutil",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/bluepill.elf",
+            "executable": "./fw/build/bluepill.elf",
             "name": "Debug (ST-Util)",
             "device": "STM32F103RB",
             "v1": false
+        },
+        {
+            "name": "GDB",
+            "type": "gdb",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "target": "${workspaceRoot}/fw/build/bluepill.elf", 
+            "gdbpath" : "/usr/bin/arm-none-eabi-gdb",
+            "autorun": [
+                "target remote localhost:3333",
+                "symbol-file ./fw/build/bluepill.elf",
+                "monitor reset" 
+                ]
         }
     ]
 }

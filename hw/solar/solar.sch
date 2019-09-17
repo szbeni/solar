@@ -1,6 +1,5 @@
 EESchema Schematic File Version 4
-LIBS:solar-cache
-EELAYER 29 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -342,7 +341,7 @@ Wire Wire Line
 Wire Wire Line
 	8950 5600 8950 5850
 $Comp
-L beni_kicad:IRF2204 Q?
+L Transistor_FET:IRF540N Q?
 U 1 1 5D47469E
 P 8850 5400
 F 0 "Q?" H 9056 5446 50  0000 L CNN
@@ -1095,15 +1094,14 @@ F 3 "" H 8000 5150 50  0001 C CNN
 	1    8000 5150
 	1    0    0    -1  
 $EndComp
-Connection ~ 8350 5400
 $Comp
-L beni_kicad:MMBT2222A Q?
+L Transistor_BJT:PN2222A Q?
 U 1 1 5D449D40
 P 8250 5600
 F 0 "Q?" H 8440 5646 50  0000 L CNN
 F 1 "MMBT2222A" H 8440 5555 50  0000 L CNN
 F 2 "Package_TO_SOT_SMD:SOT-23" H 8450 5525 50  0001 L CIN
-F 3 "http://www.fairchildsemi.com/ds/PN/PN2222A.pdf" H 8250 5600 50  0001 L CNN
+F 3 "https://www.diodes.com/assets/Datasheets/ds30041.pdf" H 8250 5600 50  0001 L CNN
 	1    8250 5600
 	1    0    0    -1  
 $EndComp
@@ -1120,4 +1118,72 @@ F 3 "~" H 7800 5600 50  0001 C CNN
 	1    7800 5600
 	0    1    1    0   
 $EndComp
+$Comp
+L Analog_ADC:ADS1115IDGS U?
+U 1 1 5D819376
+P 3150 -1700
+F 0 "U?" H 3150 -1019 50  0000 C CNN
+F 1 "ADS1115IDGS" H 3150 -1110 50  0000 C CNN
+F 2 "Package_SO:TSSOP-10_3x3mm_P0.5mm" H 3150 -2200 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/ads1113.pdf" H 3100 -2600 50  0001 C CNN
+	1    3150 -1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3150 -1300 3150 -1150
+$Comp
+L power:GND #PWR?
+U 1 1 5D835871
+P 3150 -1150
+F 0 "#PWR?" H 3150 -1400 50  0001 C CNN
+F 1 "GND" H 3155 -1323 50  0000 C CNN
+F 2 "" H 3150 -1150 50  0001 C CNN
+F 3 "" H 3150 -1150 50  0001 C CNN
+	1    3150 -1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5D838093
+P 3150 -2350
+F 0 "#PWR?" H 3150 -2500 50  0001 C CNN
+F 1 "+5V" H 3165 -2177 50  0000 C CNN
+F 2 "" H 3150 -2350 50  0001 C CNN
+F 3 "" H 3150 -2350 50  0001 C CNN
+	1    3150 -2350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3150 -2350 3150 -2200
+Wire Wire Line
+	3550 -1500 3700 -1500
+Wire Wire Line
+	3700 -1500 3700 -1400
+$Comp
+L power:GND #PWR?
+U 1 1 5D84B0CC
+P 3700 -1400
+F 0 "#PWR?" H 3700 -1650 50  0001 C CNN
+F 1 "GND" H 3705 -1573 50  0000 C CNN
+F 2 "" H 3700 -1400 50  0001 C CNN
+F 3 "" H 3700 -1400 50  0001 C CNN
+	1    3700 -1400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3550 -1600 3700 -1600
+Wire Wire Line
+	3550 -1700 3700 -1700
+Text GLabel 3700 -1700 2    50   Input ~ 0
+I2C2_SCL
+Text GLabel 3700 -1600 2    50   Input ~ 0
+I2C2_SDA
+Wire Wire Line
+	1850 3400 1700 3400
+Wire Wire Line
+	1850 3500 1700 3500
+Text GLabel 1700 3400 0    50   Input ~ 0
+I2C2_SCL
+Text GLabel 1700 3500 0    50   Input ~ 0
+I2C2_SDA
 $EndSCHEMATC
