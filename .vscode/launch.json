@@ -23,8 +23,9 @@
             "gdbpath" : "/usr/bin/arm-none-eabi-gdb",
             "autorun": [
                 "target remote localhost:3333",
-                "symbol-file ./fw/build/bluepill.elf",
-                "monitor reset" 
+                //"symbol-file ./fw/build/bluepill.elf",
+                "monitor reset halt",
+                "load"
                 ]
         }
     ]

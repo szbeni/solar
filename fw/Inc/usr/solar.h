@@ -1,11 +1,26 @@
 #include <stdint.h>
 #include "main.h"
 
+//LSB - 0.000125V  = FSR / 32768
+#define ADS1115_SCALER 4.096 / 32768.0
+
+#define SOLAR_DCDC_MAX_DUTY 5000
+
 typedef enum { COMMAND_DCDC_ENABLE = 1, COMMAND_PWM_DOWN, COMMAND_PWM_UP, COMMAND_LOAD_ENABLE } SOLAR_COMMAND;
+typedef enum { SOLAR_MPPT_DIR_RIGHT = 0, SOLAR_MPPT_DIR_LEFT = 1} SOLAR_MPPT_DIR;
+typedef struct 
+{
+    //float prev_solar_current;
+    //float prev_solar_voltage;
+    float prev_solar_power;
+    uint8_t direction;
+
+} solar_mppt_struct;
 
 typedef struct 
 {
     uint16_t raw_values[5];
+    uint16_t ads1115_values[4];
     float solar_voltage;
     float solar_current;
     float battery_voltage;
@@ -18,7 +33,7 @@ typedef struct
 {
    uint8_t enable_user;
    uint8_t enable;
-   uint16_t duty;
+   int16_t duty;
 
 
 } solar_dcdc_struct;
@@ -30,8 +45,13 @@ typedef struct
     uint16_t counter;
     solar_adc_struct adc;
     solar_dcdc_struct dcdc;
+    solar_mppt_struct mppt;
     uint8_t load_enable;
+
 } solar_struct;
+
+
+
 
 extern solar_struct solar;
 extern ADC_HandleTypeDef hadc1;
@@ -46,10 +66,15 @@ void solar_adc_init(void);
 void solar_adc_get_values(void);
 
 void solar_dcdc_init(void);
-void solar_dcdc_set_duty(uint16_t);
+void solar_dcdc_set_duty(int16_t duty);
 void solar_dcdc_enable(uint8_t enable);
+uint8_t solar_dcdc_is_enabled(void);
 
 void solar_load_enable(uint8_t enable);
 
 void solar_comm_init(void);
 uint8_t solar_comm_receive(void);
+
+void solar_ads1115_read(void);
+
+void solar_mppt(void);

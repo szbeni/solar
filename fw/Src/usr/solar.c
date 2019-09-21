@@ -26,7 +26,7 @@ void solar_print_values(void)
     snprintf((char *)buffer, 32, "Load Current: %f\r\n", solar.adc.load_current);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
-    snprintf((char *)buffer, 32, "DCDC enable: %d\r\n", solar.dcdc.enable_user);
+    snprintf((char *)buffer, 32, "DCDC enable: %d\r\n", solar.dcdc.enable);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
     snprintf((char *)buffer, 32, "DCDC duty: %d\r\n", solar.dcdc.duty);
@@ -36,6 +36,15 @@ void solar_print_values(void)
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
     snprintf((char *)buffer, 32, "Error: %d\r\n", solar.error);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "ADS1115 ch0: %d\r\n", solar.adc.ads1115_values[0]);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+    snprintf((char *)buffer, 32, "ADS1115 ch1: %d\r\n", solar.adc.ads1115_values[1]-16384);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+    snprintf((char *)buffer, 32, "ADS1115 ch2: %d\r\n", solar.adc.ads1115_values[2]-16384);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+    snprintf((char *)buffer, 32, "ADS1115 ch3: %d\r\n", solar.adc.ads1115_values[3]-16384);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
     //snprintf((char *)buffer, 32, "\r\n\r\n\r\n\r\n\r\n\r\n");
@@ -88,21 +97,26 @@ void solar_main(void)
         if(solar.tick)
         {
             solar.tick = 0;
+            solar_ads1115_read();
             solar_adc_get_values();
+
             command = solar_comm_receive();
             solar_command_handler(command);
+            //if (command) 
+            //    solar_print_values();
 
-            if (command) 
-                solar_print_values();
+            
+            solar_mppt();
 
-            solar_dcdc_enable(solar.dcdc.enable_user);
-            solar_dcdc_set_duty(solar.dcdc.duty);
+            //solar_dcdc_enable(solar.dcdc.enable_user);
+            //solar_dcdc_enable(solar.dcdc.enable);
+            //solar_dcdc_set_duty(solar.dcdc.duty);
             solar_load_enable(solar.load_enable);
 
             if(solar.counter > 50)
             {
                 solar.counter = 0;
-                solar_print_values();
+                //solar_print_values();
                 HAL_GPIO_TogglePin(BUILTIN_LED_GPIO_Port, BUILTIN_LED_Pin);
             }
         }
