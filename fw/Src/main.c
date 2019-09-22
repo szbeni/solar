@@ -532,10 +532,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(BUILTIN_LED_GPIO_Port, BUILTIN_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SWITCH_LOAD_GPIO_Port, SWITCH_LOAD_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SWITCH_FAN_Pin|SWITCH_SOLAR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SWITCH_SOLAR_GPIO_Port, SWITCH_SOLAR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SWITCH_LOAD_GPIO_Port, SWITCH_LOAD_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : BUILTIN_LED_Pin */
   GPIO_InitStruct.Pin = BUILTIN_LED_Pin;
@@ -544,19 +544,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BUILTIN_LED_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : SWITCH_FAN_Pin SWITCH_SOLAR_Pin */
+  GPIO_InitStruct.Pin = SWITCH_FAN_Pin|SWITCH_SOLAR_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pin : SWITCH_LOAD_Pin */
   GPIO_InitStruct.Pin = SWITCH_LOAD_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(SWITCH_LOAD_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : SWITCH_SOLAR_Pin */
-  GPIO_InitStruct.Pin = SWITCH_SOLAR_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(SWITCH_SOLAR_GPIO_Port, &GPIO_InitStruct);
 
 }
 

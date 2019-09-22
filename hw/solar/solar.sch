@@ -46,9 +46,7 @@ Text GLabel 3350 3800 2    50   Input ~ 0
 SWCLK
 Text GLabel 3350 3700 2    50   Input ~ 0
 SWDIO
-Wire Wire Line
-	3150 2400 3400 2400
-Text GLabel 3400 2400 2    50   Input ~ 0
+Text GLabel 5300 3150 0    50   Input ~ 0
 ADC_SOLAR_V
 Wire Wire Line
 	9350 2450 9350 2400
@@ -1187,4 +1185,100 @@ Wire Wire Line
 	5300 3350 5400 3350
 Wire Wire Line
 	5300 3450 5400 3450
+Text GLabel 5350 7150 0    50   Input ~ 0
+SWITCH_FAN
+Wire Wire Line
+	5350 7150 5550 7150
+Wire Wire Line
+	5850 7150 5900 7150
+Wire Wire Line
+	6250 6900 6250 6950
+$Comp
+L Device:R R?
+U 1 1 5D88A5F7
+P 5900 6950
+F 0 "R?" V 5693 6950 50  0000 C CNN
+F 1 "10k" V 5784 6950 50  0000 C CNN
+F 2 "" V 5830 6950 50  0001 C CNN
+F 3 "~" H 5900 6950 50  0001 C CNN
+	1    5900 6950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5900 7100 5900 7150
+Connection ~ 5900 7150
+Wire Wire Line
+	5900 7150 5950 7150
+$Comp
+L Transistor_BJT:PN2222A Q?
+U 1 1 5D88A600
+P 6150 7150
+F 0 "Q?" H 6340 7196 50  0000 L CNN
+F 1 "MMBT2222A" H 6340 7105 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 6350 7075 50  0001 L CIN
+F 3 "https://www.diodes.com/assets/Datasheets/ds30041.pdf" H 6150 7150 50  0001 L CNN
+	1    6150 7150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5D88A607
+P 5700 7150
+F 0 "R?" V 5493 7150 50  0000 C CNN
+F 1 "470" V 5584 7150 50  0000 C CNN
+F 2 "" V 5630 7150 50  0001 C CNN
+F 3 "~" H 5700 7150 50  0001 C CNN
+	1    5700 7150
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:Screw_Terminal_01x02 J?
+U 1 1 5D893225
+P 6450 6800
+F 0 "J?" H 6530 6792 50  0000 L CNN
+F 1 "Load" H 6530 6701 50  0000 L CNN
+F 2 "" H 6450 6800 50  0001 C CNN
+F 3 "~" H 6450 6800 50  0001 C CNN
+	1    6450 6800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5D894632
+P 6250 7450
+F 0 "#PWR?" H 6250 7200 50  0001 C CNN
+F 1 "GND" H 6255 7277 50  0000 C CNN
+F 2 "" H 6250 7450 50  0001 C CNN
+F 3 "" H 6250 7450 50  0001 C CNN
+	1    6250 7450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6250 7350 6250 7450
+Wire Wire Line
+	6250 6600 5900 6600
+Wire Wire Line
+	5900 6600 5900 6800
+Wire Wire Line
+	6250 6600 6250 6800
+$Comp
+L power:+5V #PWR?
+U 1 1 5D8AF68C
+P 5900 6550
+F 0 "#PWR?" H 5900 6400 50  0001 C CNN
+F 1 "+5V" H 5915 6723 50  0000 C CNN
+F 2 "" H 5900 6550 50  0001 C CNN
+F 3 "" H 5900 6550 50  0001 C CNN
+	1    5900 6550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5900 6550 5900 6600
+Connection ~ 5900 6600
+Text GLabel 3400 3100 2    50   Input ~ 0
+SWITCH_FAN
+Wire Wire Line
+	3150 3100 3400 3100
+Wire Wire Line
+	5300 3150 5400 3150
 $EndSCHEMATC

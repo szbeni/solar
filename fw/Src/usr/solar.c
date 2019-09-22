@@ -4,14 +4,14 @@
 
 solar_struct solar;
 
-uint8_t buffer[32];
+uint8_t buffer[64];
 
 void solar_print_values(void)
 {
-    snprintf((char *)buffer, 32, "\033[2J");
-    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+    //snprintf((char *)buffer, 64, "\033[2J");
+    //HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
-    snprintf((char *)buffer, 32, "Battery Voltage: %f\r\n", solar.adc.battery_voltage);
+    /*snprintf((char *)buffer, 32, "Battery Voltage: %f\r\n", solar.adc.battery_voltage);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
     snprintf((char *)buffer, 32, "Battery Current: %f\r\n", solar.adc.battery_current);
@@ -40,13 +40,22 @@ void solar_print_values(void)
 
     snprintf((char *)buffer, 32, "ADS1115 ch0: %d\r\n", solar.adc.ads1115_values[0]);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
-    snprintf((char *)buffer, 32, "ADS1115 ch1: %d\r\n", solar.adc.ads1115_values[1]-16384);
-    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
-    snprintf((char *)buffer, 32, "ADS1115 ch2: %d\r\n", solar.adc.ads1115_values[2]-16384);
-    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
-    snprintf((char *)buffer, 32, "ADS1115 ch3: %d\r\n", solar.adc.ads1115_values[3]-16384);
+
+    snprintf((char *)buffer, 32, "ADS1115 ch1 load: %d\r\n", solar.adc.ads1115_values[1]-16384);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
+    snprintf((char *)buffer, 32, "ADS1115 ch2 solar: %d\r\n", solar.adc.ads1115_values[2]-16384);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    snprintf((char *)buffer, 32, "ADS1115 ch3 bat: %d\r\n", solar.adc.ads1115_values[3]-16384);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+*/
+
+    snprintf((char *)buffer, 64, "SV%f BV%f SC%f BC%f LC%f D%d E%d DT%d\r\n", solar.adc.solar_voltage, solar.adc.battery_voltage, solar.adc.solar_current, solar.adc.battery_current, solar.adc.load_current, solar.dcdc.duty, solar.dcdc.enable, solar.mppt.deadtime);
+    HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
+
+    
     //snprintf((char *)buffer, 32, "\r\n\r\n\r\n\r\n\r\n\r\n");
     //HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 }
@@ -56,28 +65,40 @@ void solar_command_handler(uint8_t command)
     switch(command)
     {
         case COMMAND_DCDC_ENABLE:
-                if (solar.dcdc.enable_user)
-                    solar.dcdc.enable_user = 0;
+                if (solar.mppt.enable)
+                    solar.mppt.enable = 0;
                 else
-                    solar.dcdc.enable_user = 1;
+                    solar.mppt.enable = 1;
             break;
             
         case COMMAND_PWM_DOWN:
-                if(solar.dcdc.duty>0) 
-                    solar.dcdc.duty -= 100;
+                solar.dcdc.duty -= 10;
+                if(solar.dcdc.duty<0)
+                    solar.dcdc.duty = 0;
+
             break;
 
         case COMMAND_PWM_UP:
-                if(solar.dcdc.duty<5000)
-                    solar.dcdc.duty += 100;
+                solar.dcdc.duty += 10;
+                if(solar.dcdc.duty>SOLAR_DCDC_MAX_DUTY)
+                    solar.dcdc.duty = SOLAR_DCDC_MAX_DUTY;
+                
             break;
 
         case COMMAND_LOAD_ENABLE:
-                if (solar.load_enable)
-                    solar.load_enable = 0;
+                if (solar.load_enable_user)
+                    solar.load_enable_user = 0;
                 else
-                    solar.load_enable = 1;
+                    solar.load_enable_user = 1;
             break;
+
+        case COMMAND_FAN_ENABLE:
+                if (solar.fan_enable)
+                    solar.fan_enable = 0;
+                else
+                    solar.fan_enable = 1;
+            break;
+                
     }
 }
 
@@ -92,6 +113,10 @@ void solar_main(void)
     
     HAL_TIM_Base_Start_IT(&htim2);
 
+    solar.mppt.enable = 1;
+    solar.load_enable = 1;
+    solar.load_enable_user = 1;
+
     while(1)
     {
         if(solar.tick)
@@ -104,19 +129,46 @@ void solar_main(void)
             solar_command_handler(command);
             //if (command) 
             //    solar_print_values();
-
-            
-            solar_mppt();
-
             //solar_dcdc_enable(solar.dcdc.enable_user);
             //solar_dcdc_enable(solar.dcdc.enable);
             //solar_dcdc_set_duty(solar.dcdc.duty);
-            solar_load_enable(solar.load_enable);
+            //if ((solar.counter % 2) == 0)
+            //    solar.fan_enable = 1;
+            //else
+            //    solar.fan_enable = 0;
+                
+            solar_fan_enable(solar.fan_enable);
+            solar.mppt.prev_solar_power = solar.adc.solar_current * solar.adc.solar_voltage;
 
+            //if((solar.counter % 10) == 0)
+            //{
+
+            solar_mppt();
+
+
+            solar_dcdc_set_duty(solar.dcdc.duty);
+            solar_dcdc_enable(solar.dcdc.enable); 
+            solar_fan_enable(solar.fan_enable);
+
+            //add a hysteresis for swith on and off voltages
+            if (solar.load_enable == 1)
+            {
+                if (solar.adc.battery_voltage < SOLAR_BATTERY_MIN_VOLTAGE)
+                    solar.load_enable = 0;
+            }
+            else if (solar.load_enable == 0)
+            {
+                if (solar.adc.battery_voltage > SOLAR_BATTERY_VOLTAGE_SWITCH_ON_LOAD)
+                    solar.load_enable = 1;
+            }
+            solar_load_enable(solar.load_enable_user && solar.load_enable);
+            
+            if((solar.counter % 5) == 0)
+                solar_print_values();
             if(solar.counter > 50)
             {
                 solar.counter = 0;
-                //solar_print_values();
+                
                 HAL_GPIO_TogglePin(BUILTIN_LED_GPIO_Port, BUILTIN_LED_Pin);
             }
         }

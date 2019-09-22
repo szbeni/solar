@@ -4,16 +4,28 @@
 //LSB - 0.000125V  = FSR / 32768
 #define ADS1115_SCALER 4.096 / 32768.0
 
-#define SOLAR_DCDC_MAX_DUTY 5000
+#define SOLAR_DCDC_MAX_DUTY 5000                      //maximum duty cycle amount, set in CubeMX timer settings
+#define SOLAR_MPPT_VOLTAGE 31.0                       //MPPT voltage
+#define SOLAR_PANEL_NOMINAL_VOLTAGE 35.0              //nominal solar panel voltage
+#define SOLAR_PANEL_VOLTAGE_MIN 16.0                  //switch on charging when solar voltage is greater than this
+#define SOLAR_BATTERY_MIN_VOLTAGE 11.0                //switch off load when the battery voltage is less than this
+#define SOLAR_BATTERY_VOLTAGE_SWITCH_ON_LOAD 12.1     //switch on the load when battery voltage is greater than this
+#define SOLAR_MPPT_DUTY_STEP 1
+#define SOLAR_MPPT_DUTY_STEP_BIG 30
+#define SOLAR_MPPT_DEADTIME 1000                      //not allowed to change enable state for the deadtime
+    
 
-typedef enum { COMMAND_DCDC_ENABLE = 1, COMMAND_PWM_DOWN, COMMAND_PWM_UP, COMMAND_LOAD_ENABLE } SOLAR_COMMAND;
+
+typedef enum { COMMAND_DCDC_ENABLE = 1, COMMAND_PWM_DOWN, COMMAND_PWM_UP, COMMAND_LOAD_ENABLE, COMMAND_FAN_ENABLE } SOLAR_COMMAND;
 typedef enum { SOLAR_MPPT_DIR_RIGHT = 0, SOLAR_MPPT_DIR_LEFT = 1} SOLAR_MPPT_DIR;
 typedef struct 
 {
     //float prev_solar_current;
     //float prev_solar_voltage;
+    uint8_t enable;
     float prev_solar_power;
     uint8_t direction;
+    uint16_t deadtime;
 
 } solar_mppt_struct;
 
@@ -31,7 +43,6 @@ typedef struct
 
 typedef struct 
 {
-   uint8_t enable_user;
    uint8_t enable;
    int16_t duty;
 
@@ -47,6 +58,8 @@ typedef struct
     solar_dcdc_struct dcdc;
     solar_mppt_struct mppt;
     uint8_t load_enable;
+    uint8_t load_enable_user;
+    uint8_t fan_enable;
 
 } solar_struct;
 
@@ -71,6 +84,7 @@ void solar_dcdc_enable(uint8_t enable);
 uint8_t solar_dcdc_is_enabled(void);
 
 void solar_load_enable(uint8_t enable);
+void solar_fan_enable(uint8_t enable);
 
 void solar_comm_init(void);
 uint8_t solar_comm_receive(void);

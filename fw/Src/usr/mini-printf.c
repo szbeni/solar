@@ -201,6 +201,10 @@ mini_vsnprintf(char *buffer, unsigned int buffer_len, const char *fmt, va_list v
 					fval -= ival;
 					ival = (unsigned int)(fval * 1000.0);
 					len = mini_itoa(ival, 10, 0, (ch=='u'), bf, zero_pad);
+					if (len < 3)
+						_putc('0', &b);
+					if (len < 2)
+						_putc('0', &b);
 					_puts(bf, len, &b);
 					break;
 

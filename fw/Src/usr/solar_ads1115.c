@@ -41,7 +41,7 @@ void solar_ads1115_read(void)
 			// 2 	COMP_LAT  - 0: Nonlatching comparator, 1: Latching comparator
 			// 1:0  COMP_QUE  - 00: Assert after one conversion, 01: Assert after two conversions, 10: Assert after four conversions, 11: Disable comparator and set ALERT/RDY pin to high-impedance (default)
 
-			ADSwrite[2] = 0x83; // 10000011
+			ADSwrite[2] = 0xE3; // 11100011
 
             //write config
 			HAL_I2C_Master_Transmit(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 3, 100);
@@ -50,7 +50,7 @@ void solar_ads1115_read(void)
 			ADSwrite[0] = 0x00;
 			HAL_I2C_Master_Transmit(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 1, 100);
 			//wait for conv
-            HAL_Delay(10);
+            HAL_Delay(2);
             //read conv register
 			HAL_I2C_Master_Receive(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 2, 100);
 			value = (ADSwrite[0] << 8 | ADSwrite[1]);
