@@ -5,18 +5,30 @@
 #define ADS1115_SCALER 4.096 / 32768.0
 
 #define SOLAR_DCDC_MAX_DUTY 5000                      //maximum duty cycle amount, set in CubeMX timer settings
-#define SOLAR_MPPT_VOLTAGE 31.0                       //MPPT voltage
 #define SOLAR_PANEL_NOMINAL_VOLTAGE 35.0              //nominal solar panel voltage
 #define SOLAR_PANEL_VOLTAGE_MIN 16.0                  //switch on charging when solar voltage is greater than this
 #define SOLAR_BATTERY_MIN_VOLTAGE 11.0                //switch off load when the battery voltage is less than this
 #define SOLAR_BATTERY_VOLTAGE_SWITCH_ON_LOAD 12.1     //switch on the load when battery voltage is greater than this
 #define SOLAR_MPPT_DUTY_STEP 1
 #define SOLAR_MPPT_DUTY_STEP_BIG 30
-#define SOLAR_MPPT_DEADTIME 1000                      //not allowed to change enable state for the deadtime
+#define SOLAR_MPPT_DEADTIME 100                      //not allowed to change enable state for the deadtime
+
+//Modify it by hand after measured everything
+#define CALIB_SOLAR_VOLTAGE_OFFSET 195
+#define CALIB_SOLAR_VOLTAGE_GAIN   1.0
+
+#define CALIB_BATTERY_VOLTAGE_OFFSET 157
+#define CALIB_BATTERY_VOLTAGE_GAIN   1.0
+
+#define CALIB_SOLAR_CURRENT_GAIN   1.0
+
+#define CALIB_BATTERY_CURRENT_GAIN   1.0
+
+#define CALIB_LOAD_CURRENT_GAIN   1.0
     
 
 
-typedef enum { COMMAND_DCDC_ENABLE = 1, COMMAND_PWM_DOWN, COMMAND_PWM_UP, COMMAND_LOAD_ENABLE, COMMAND_FAN_ENABLE } SOLAR_COMMAND;
+typedef enum { COMMAND_DCDC_ENABLE = 1, COMMAND_PWM_DOWN, COMMAND_PWM_UP, COMMAND_LOAD_ENABLE, COMMAND_FAN_ENABLE, COMMAND_MPPT_ENABLE} SOLAR_COMMAND;
 typedef enum { SOLAR_MPPT_DIR_RIGHT = 0, SOLAR_MPPT_DIR_LEFT = 1} SOLAR_MPPT_DIR;
 typedef struct 
 {
@@ -26,6 +38,11 @@ typedef struct
     float prev_solar_power;
     uint8_t direction;
     uint16_t deadtime;
+    float mppt_voltage;
+    float kP;
+    float kI;
+    float stateI;
+    float limitI;
 
 } solar_mppt_struct;
 
@@ -33,6 +50,7 @@ typedef struct
 {
     uint16_t raw_values[5];
     uint16_t ads1115_values[4];
+    int16_t ads1115_offset[4];
     float solar_voltage;
     float solar_current;
     float battery_voltage;
@@ -90,5 +108,7 @@ void solar_comm_init(void);
 uint8_t solar_comm_receive(void);
 
 void solar_ads1115_read(void);
+void solar_ads1115_reset_offsets(void);
 
 void solar_mppt(void);
+void solar_mppt_init(void);

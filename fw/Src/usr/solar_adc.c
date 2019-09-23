@@ -1,20 +1,6 @@
 #include "solar.h"
  
-//Modify it by hand after measured everything
-#define CALIB_SOLAR_VOLTAGE_OFFSET 195
-#define CALIB_SOLAR_VOLTAGE_GAIN   1.0
 
-#define CALIB_SOLAR_CURRENT_OFFSET -3208
-#define CALIB_SOLAR_CURRENT_GAIN   1.0
-
-#define CALIB_BATTERY_VOLTAGE_OFFSET 157
-#define CALIB_BATTERY_VOLTAGE_GAIN   1.0
-
-#define CALIB_BATTERY_CURRENT_OFFSET -3440
-#define CALIB_BATTERY_CURRENT_GAIN   1.0
-
-#define CALIB_LOAD_CURRENT_OFFSET -3604
-#define CALIB_LOAD_CURRENT_GAIN   1.0
 
 void solar_adc_init(void)
 {
@@ -36,7 +22,7 @@ static float solar_adc_get_solar_current(uint16_t raw)
     //ACS712 30A version 2.5V + 0.066 Volt/Amps (bi directional)
 
     float scaled;
-    scaled = ((int16_t)raw - 16384 + CALIB_SOLAR_CURRENT_OFFSET ) * ADS1115_SCALER / 0.066 * CALIB_SOLAR_CURRENT_GAIN;
+    scaled = ((int16_t)raw - 16384 + solar.adc.ads1115_offset[2] ) * ADS1115_SCALER / 0.066 * CALIB_SOLAR_CURRENT_GAIN;
     return scaled;
 }
 
@@ -55,7 +41,7 @@ static float solar_adc_get_battery_current(uint16_t raw)
 {
     //ACS712 30A version 2.5V + 0.066 Volt/Amps (bi directional)
     float scaled;
-    scaled = ((int16_t)raw - 16384 + CALIB_BATTERY_CURRENT_OFFSET ) * ADS1115_SCALER / 0.066 * CALIB_BATTERY_CURRENT_GAIN;
+    scaled = ((int16_t)raw - 16384 + solar.adc.ads1115_offset[3] ) * ADS1115_SCALER / 0.066 * CALIB_BATTERY_CURRENT_GAIN;
     return scaled;
 }
 
@@ -64,7 +50,7 @@ static float solar_adc_get_load_current(uint16_t raw)
 {
     //ACS712 30A version 2.5V + 0.066 Volt/Amps (bi directional)
     float scaled;
-    scaled = ((int16_t)raw - 16384 + CALIB_LOAD_CURRENT_OFFSET ) * ADS1115_SCALER / 0.066 * CALIB_LOAD_CURRENT_GAIN;
+    scaled = ((int16_t)raw - 16384 + solar.adc.ads1115_offset[1] ) * ADS1115_SCALER / 0.066 * CALIB_LOAD_CURRENT_GAIN;
     return scaled;
 }
 

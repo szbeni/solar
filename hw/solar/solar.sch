@@ -764,11 +764,11 @@ Wire Wire Line
 Text GLabel 1700 2400 0    50   Input ~ 0
 SWITCH_LOAD
 Text GLabel 3400 3300 2    50   Input ~ 0
-SWITCH_SOLAR
+SWITCH_DCDC
 Wire Wire Line
 	7300 1050 7400 1050
 Text GLabel 6550 750  0    50   Input ~ 0
-SWITCH_SOLAR
+SWITCH_DCDC
 $Comp
 L power:GND #PWR?
 U 1 1 5D6BE550
@@ -849,7 +849,7 @@ F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/da
 	1    0    0    -1  
 $EndComp
 Text GLabel 3400 3200 2    50   Input ~ 0
-PWM_SOLAR
+PWM_DCDC
 $Comp
 L Connector_Generic:Conn_01x04 J?
 U 1 1 5D4543AE
@@ -892,7 +892,7 @@ Wire Wire Line
 Wire Wire Line
 	6550 950  6650 950 
 Text GLabel 6550 950  0    50   Input ~ 0
-PWM_SOLAR
+PWM_DCDC
 Connection ~ 6650 750 
 Wire Wire Line
 	6650 750  7400 750 
@@ -924,7 +924,7 @@ Wire Wire Line
 	7350 1900 7350 1750
 Connection ~ 7350 1750
 Wire Wire Line
-	7350 1750 8350 1750
+	7350 1750 7600 1750
 $Comp
 L Regulator_Linear:L7805 U?
 U 1 1 5D4064C3
@@ -1281,4 +1281,458 @@ Wire Wire Line
 	3150 3100 3400 3100
 Wire Wire Line
 	5300 3150 5400 3150
+$Comp
+L Transistor_FET:IRF540N Q?
+U 1 1 5D89EC1C
+P 4900 -2900
+F 0 "Q?" H 5106 -2854 50  0000 L CNN
+F 1 "IRF2204" H 5106 -2945 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 5150 -2975 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf2204.pdf" H 4900 -2900 50  0001 L CNN
+	1    4900 -2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_FET:IRF540N Q?
+U 1 1 5D8A101E
+P 4900 -1250
+F 0 "Q?" H 5106 -1204 50  0000 L CNN
+F 1 "IRF2204" H 5106 -1295 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 5150 -1325 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf2204.pdf" H 4900 -1250 50  0001 L CNN
+	1    4900 -1250
+	1    0    0    -1  
+$EndComp
+Text GLabel 1700 3700 0    50   Input ~ 0
+PWM_DCDC_N
+Wire Wire Line
+	1700 3700 1850 3700
+Text GLabel 350  -2500 0    50   Input ~ 0
+PWM_DCDC
+Wire Wire Line
+	350  -2500 450  -2500
+Wire Wire Line
+	850  -2500 900  -2500
+$Comp
+L Device:R R?
+U 1 1 5D8D13FE
+P 450 -2900
+F 0 "R?" V 243 -2900 50  0000 C CNN
+F 1 "10k" V 334 -2900 50  0000 C CNN
+F 2 "" V 380 -2900 50  0001 C CNN
+F 3 "~" H 450 -2900 50  0001 C CNN
+	1    450  -2900
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	900  -2550 900  -2500
+Connection ~ 900  -2500
+Wire Wire Line
+	900  -2500 950  -2500
+$Comp
+L Device:R R?
+U 1 1 5D8D140D
+P 700 -2500
+F 0 "R?" V 493 -2500 50  0000 C CNN
+F 1 "1k" V 584 -2500 50  0000 C CNN
+F 2 "" V 630 -2500 50  0001 C CNN
+F 3 "~" H 700 -2500 50  0001 C CNN
+	1    700  -2500
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5D8D1419
+P 1250 -2200
+F 0 "#PWR?" H 1250 -2450 50  0001 C CNN
+F 1 "GND" H 1255 -2373 50  0000 C CNN
+F 2 "" H 1250 -2200 50  0001 C CNN
+F 3 "" H 1250 -2200 50  0001 C CNN
+	1    1250 -2200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1250 -2300 1250 -2200
+Connection ~ 450  -2500
+Wire Wire Line
+	450  -2500 550  -2500
+Wire Wire Line
+	2200 -2800 2200 -2900
+$Comp
+L Transistor_BJT:BC858 Q?
+U 1 1 5D94DC3E
+P 2100 -2600
+F 0 "Q?" H 2291 -2646 50  0000 L CNN
+F 1 "BC858" H 2291 -2555 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 2300 -2675 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC856.pdf" H 2100 -2600 50  0001 L CNN
+	1    2100 -2600
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	2200 -2400 2200 -2200
+Wire Wire Line
+	2200 -3350 2200 -3550
+Wire Wire Line
+	2200 -3550 3150 -3550
+Wire Wire Line
+	3150 -3550 3150 -3350
+Wire Wire Line
+	1850 -2600 1850 -3150
+Wire Wire Line
+	1750 -3150 1850 -3150
+$Comp
+L Device:R R?
+U 1 1 5D9E5856
+P 1600 -3150
+F 0 "R?" V 1393 -3150 50  0000 C CNN
+F 1 "1k" V 1484 -3150 50  0000 C CNN
+F 2 "" V 1530 -3150 50  0001 C CNN
+F 3 "~" H 1600 -3150 50  0001 C CNN
+	1    1600 -3150
+	0    1    1    0   
+$EndComp
+Connection ~ 1850 -3150
+Wire Wire Line
+	1850 -3150 1900 -3150
+Wire Wire Line
+	1900 -2600 1850 -2600
+$Comp
+L Device:R R?
+U 1 1 5DA0845A
+P 1250 -3350
+F 0 "R?" V 1043 -3350 50  0000 C CNN
+F 1 "10k" V 1134 -3350 50  0000 C CNN
+F 2 "" V 1180 -3350 50  0001 C CNN
+F 3 "~" H 1250 -3350 50  0001 C CNN
+	1    1250 -3350
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1450 -3150 1250 -3150
+Wire Wire Line
+	1250 -3150 1250 -3200
+Wire Wire Line
+	2200 -3550 1250 -3550
+Wire Wire Line
+	1250 -3550 1250 -3500
+Connection ~ 2200 -3550
+$Comp
+L Device:D D?
+U 1 1 5DA2D81D
+P 950 -3550
+F 0 "D?" H 950 -3766 50  0000 C CNN
+F 1 "D" H 950 -3675 50  0000 C CNN
+F 2 "" H 950 -3550 50  0001 C CNN
+F 3 "~" H 950 -3550 50  0001 C CNN
+	1    950  -3550
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1100 -3550 1250 -3550
+Connection ~ 1250 -3550
+$Comp
+L power:+12V #PWR?
+U 1 1 5DA403D5
+P 450 -3800
+F 0 "#PWR?" H 450 -3950 50  0001 C CNN
+F 1 "+12V" H 465 -3627 50  0000 C CNN
+F 2 "" H 450 -3800 50  0001 C CNN
+F 3 "" H 450 -3800 50  0001 C CNN
+	1    450  -3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	450  -3800 450  -3550
+Wire Wire Line
+	1250 -3150 1250 -2700
+Connection ~ 1250 -3150
+Connection ~ 2200 -2900
+Wire Wire Line
+	2200 -2900 2200 -2950
+Text GLabel 7650 1600 2    50   Input ~ 0
+V_SOLAR
+Wire Wire Line
+	7650 1600 7600 1600
+Wire Wire Line
+	7600 1600 7600 1750
+Connection ~ 7600 1750
+Wire Wire Line
+	7600 1750 8350 1750
+Text GLabel 4500 -3400 0    50   Input ~ 0
+V_SOLAR
+Wire Wire Line
+	2200 -2200 3150 -2200
+$Comp
+L Device:CP C?
+U 1 1 5DB348C3
+P 3150 -3200
+F 0 "C?" H 3268 -3154 50  0000 L CNN
+F 1 "10uF" H 3268 -3245 50  0000 L CNN
+F 2 "" H 3188 -3350 50  0001 C CNN
+F 3 "~" H 3150 -3200 50  0001 C CNN
+	1    3150 -3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3150 -3050 3150 -2200
+Connection ~ 3150 -2200
+Wire Wire Line
+	450  -3550 450  -3050
+Connection ~ 450  -3550
+Wire Wire Line
+	450  -3550 800  -3550
+Wire Wire Line
+	450  -2750 450  -2500
+Wire Wire Line
+	4500 -3400 5000 -3400
+Wire Wire Line
+	5000 -3400 5000 -3100
+Wire Wire Line
+	2200 -2900 4700 -2900
+$Comp
+L Transistor_BJT:BC858 Q?
+U 1 1 5DC00DE0
+P 2150 -950
+F 0 "Q?" H 2341 -996 50  0000 L CNN
+F 1 "BC858" H 2341 -905 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 2350 -1025 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC856.pdf" H 2150 -950 50  0001 L CNN
+	1    2150 -950
+	1    0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5DC488FA
+P 5000 -950
+F 0 "#PWR?" H 5000 -1200 50  0001 C CNN
+F 1 "GND" H 5005 -1123 50  0000 C CNN
+F 2 "" H 5000 -950 50  0001 C CNN
+F 3 "" H 5000 -950 50  0001 C CNN
+	1    5000 -950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1950 -1500 1900 -1500
+Wire Wire Line
+	1900 -950 1950 -950
+Wire Wire Line
+	1900 -1500 1900 -950
+Text GLabel 350  -1250 0    50   Input ~ 0
+PWM_DCDC_N
+Wire Wire Line
+	350  -1250 450  -1250
+Wire Wire Line
+	850  -1250 900  -1250
+$Comp
+L Device:R R?
+U 1 1 5DCAD9C6
+P 450 -1650
+F 0 "R?" V 243 -1650 50  0000 C CNN
+F 1 "10k" V 334 -1650 50  0000 C CNN
+F 2 "" V 380 -1650 50  0001 C CNN
+F 3 "~" H 450 -1650 50  0001 C CNN
+	1    450  -1650
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	900  -1300 900  -1250
+Connection ~ 900  -1250
+Wire Wire Line
+	900  -1250 950  -1250
+$Comp
+L Device:R R?
+U 1 1 5DCAD9D5
+P 700 -1250
+F 0 "R?" V 493 -1250 50  0000 C CNN
+F 1 "1k" V 584 -1250 50  0000 C CNN
+F 2 "" V 630 -1250 50  0001 C CNN
+F 3 "~" H 700 -1250 50  0001 C CNN
+	1    700  -1250
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5DCAD9DB
+P 1250 -700
+F 0 "#PWR?" H 1250 -950 50  0001 C CNN
+F 1 "GND" H 1255 -873 50  0000 C CNN
+F 2 "" H 1250 -700 50  0001 C CNN
+F 3 "" H 1250 -700 50  0001 C CNN
+	1    1250 -700
+	1    0    0    -1  
+$EndComp
+Connection ~ 450  -1250
+Wire Wire Line
+	450  -1250 550  -1250
+Wire Wire Line
+	450  -1500 450  -1250
+$Comp
+L Device:R R?
+U 1 1 5DCE3AB2
+P 1250 -1650
+F 0 "R?" V 1043 -1650 50  0000 C CNN
+F 1 "10k" V 1134 -1650 50  0000 C CNN
+F 2 "" V 1180 -1650 50  0001 C CNN
+F 3 "~" H 1250 -1650 50  0001 C CNN
+	1    1250 -1650
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1250 -1500 1250 -1450
+Wire Wire Line
+	1250 -1800 1250 -1850
+Wire Wire Line
+	1250 -1850 450  -1850
+Wire Wire Line
+	450  -1850 450  -1800
+$Comp
+L power:+12V #PWR?
+U 1 1 5DD1A39A
+P 450 -1850
+F 0 "#PWR?" H 450 -2000 50  0001 C CNN
+F 1 "+12V" H 465 -1677 50  0000 C CNN
+F 2 "" H 450 -1850 50  0001 C CNN
+F 3 "" H 450 -1850 50  0001 C CNN
+	1    450  -1850
+	1    0    0    -1  
+$EndComp
+Connection ~ 450  -1850
+$Comp
+L Device:R R?
+U 1 1 5DD2DD7C
+P 1600 -1500
+F 0 "R?" V 1393 -1500 50  0000 C CNN
+F 1 "1k" V 1484 -1500 50  0000 C CNN
+F 2 "" V 1530 -1500 50  0001 C CNN
+F 3 "~" H 1600 -1500 50  0001 C CNN
+	1    1600 -1500
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1750 -1500 1900 -1500
+Connection ~ 1900 -1500
+Wire Wire Line
+	1450 -1500 1250 -1500
+Connection ~ 1250 -1500
+Wire Wire Line
+	1250 -1850 2250 -1850
+Wire Wire Line
+	2250 -1850 2250 -1700
+Connection ~ 1250 -1850
+$Comp
+L power:GND #PWR?
+U 1 1 5DD749DF
+P 2250 -700
+F 0 "#PWR?" H 2250 -950 50  0001 C CNN
+F 1 "GND" H 2255 -873 50  0000 C CNN
+F 2 "" H 2250 -700 50  0001 C CNN
+F 3 "" H 2250 -700 50  0001 C CNN
+	1    2250 -700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 -700 2250 -750
+Wire Wire Line
+	1250 -1050 1250 -700
+Wire Wire Line
+	3150 -2200 5000 -2200
+Connection ~ 5000 -2200
+Wire Wire Line
+	5000 -2700 5000 -2200
+Wire Wire Line
+	4700 -1250 2250 -1250
+Wire Wire Line
+	2250 -1300 2250 -1250
+Connection ~ 2250 -1250
+Wire Wire Line
+	2250 -1250 2250 -1150
+Wire Wire Line
+	5000 -2200 5000 -1450
+$Comp
+L pspice:INDUCTOR L?
+U 1 1 5DE26E45
+P 6000 -2200
+F 0 "L?" H 6000 -1985 50  0000 C CNN
+F 1 "22uH" H 6000 -2076 50  0000 C CNN
+F 2 "" H 6000 -2200 50  0001 C CNN
+F 3 "~" H 6000 -2200 50  0001 C CNN
+	1    6000 -2200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 -2200 5750 -2200
+$Comp
+L Device:CP C?
+U 1 1 5DE38AE8
+P 6650 -1700
+F 0 "C?" H 6768 -1654 50  0000 L CNN
+F 1 "470uF" H 6768 -1745 50  0000 L CNN
+F 2 "" H 6688 -1850 50  0001 C CNN
+F 3 "~" H 6650 -1700 50  0001 C CNN
+	1    6650 -1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6250 -2200 6650 -2200
+Wire Wire Line
+	6650 -2200 6650 -1850
+Wire Wire Line
+	5000 -1050 5000 -1000
+Wire Wire Line
+	5000 -1000 6650 -1000
+Connection ~ 5000 -1000
+Wire Wire Line
+	5000 -1000 5000 -950
+Wire Wire Line
+	6650 -1550 6650 -1000
+Wire Wire Line
+	6650 -2200 7450 -2200
+Connection ~ 6650 -2200
+Text GLabel 7450 -2200 2    50   Input ~ 0
+DCDC_VOUT
+$Comp
+L Transistor_BJT:MMBT5551L Q?
+U 1 1 5DED2527
+P 2100 -3150
+F 0 "Q?" H 2291 -3104 50  0000 L CNN
+F 1 "MMBT5551L" H 2291 -3195 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 2300 -3225 50  0001 L CIN
+F 3 "www.onsemi.com/pub/Collateral/MMBT5550LT1-D.PDF" H 2100 -3150 50  0001 L CNN
+	1    2100 -3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_BJT:MMBT5551L Q?
+U 1 1 5DED31DE
+P 1150 -2500
+F 0 "Q?" H 1341 -2454 50  0000 L CNN
+F 1 "MMBT5551L" H 1341 -2545 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 1350 -2575 50  0001 L CIN
+F 3 "www.onsemi.com/pub/Collateral/MMBT5550LT1-D.PDF" H 1150 -2500 50  0001 L CNN
+	1    1150 -2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_BJT:MMBT5551L Q?
+U 1 1 5DED37EC
+P 1150 -1250
+F 0 "Q?" H 1341 -1204 50  0000 L CNN
+F 1 "MMBT5551L" H 1341 -1295 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 1350 -1325 50  0001 L CIN
+F 3 "www.onsemi.com/pub/Collateral/MMBT5550LT1-D.PDF" H 1150 -1250 50  0001 L CNN
+	1    1150 -1250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_BJT:MMBT5551L Q?
+U 1 1 5DED41AC
+P 2150 -1500
+F 0 "Q?" H 2341 -1454 50  0000 L CNN
+F 1 "MMBT5551L" H 2341 -1545 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 2350 -1575 50  0001 L CIN
+F 3 "www.onsemi.com/pub/Collateral/MMBT5550LT1-D.PDF" H 2150 -1500 50  0001 L CNN
+	1    2150 -1500
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

@@ -404,7 +404,7 @@ static void MX_TIM1_Init(void)
   sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
   sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
   sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
-  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.DeadTime = 255;
   sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
   sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
   sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
@@ -532,7 +532,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(BUILTIN_LED_GPIO_Port, BUILTIN_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SWITCH_FAN_Pin|SWITCH_SOLAR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SWITCH_FAN_Pin|SWITCH_DCDC_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(SWITCH_LOAD_GPIO_Port, SWITCH_LOAD_Pin, GPIO_PIN_RESET);
@@ -544,8 +544,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BUILTIN_LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SWITCH_FAN_Pin SWITCH_SOLAR_Pin */
-  GPIO_InitStruct.Pin = SWITCH_FAN_Pin|SWITCH_SOLAR_Pin;
+  /*Configure GPIO pins : SWITCH_FAN_Pin SWITCH_DCDC_Pin */
+  GPIO_InitStruct.Pin = SWITCH_FAN_Pin|SWITCH_DCDC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

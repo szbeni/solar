@@ -66,10 +66,12 @@ void Error_Handler(void);
 #define SWITCH_FAN_GPIO_Port GPIOA
 #define SWITCH_LOAD_Pin GPIO_PIN_0
 #define SWITCH_LOAD_GPIO_Port GPIOB
-#define PWM_SOLAR_Pin GPIO_PIN_8
-#define PWM_SOLAR_GPIO_Port GPIOA
-#define SWITCH_SOLAR_Pin GPIO_PIN_9
-#define SWITCH_SOLAR_GPIO_Port GPIOA
+#define PWM_DCDC_N_Pin GPIO_PIN_13
+#define PWM_DCDC_N_GPIO_Port GPIOB
+#define PWM_DCDC_Pin GPIO_PIN_8
+#define PWM_DCDC_GPIO_Port GPIOA
+#define SWITCH_DCDC_Pin GPIO_PIN_9
+#define SWITCH_DCDC_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

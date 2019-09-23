@@ -17,6 +17,8 @@ uint8_t solar_comm_receive(void)
           else if(uart_char == '3') return COMMAND_PWM_UP;
           else if(uart_char == '4') return COMMAND_LOAD_ENABLE;
           else if(uart_char == '5') return COMMAND_FAN_ENABLE;
+          else if(uart_char == '6') return COMMAND_MPPT_ENABLE;
+
 
 
     }
