@@ -7,28 +7,56 @@ void solar_dcdc_init(void)
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
 }
 
+
+static uint8_t dcdc_enabled=1;
 uint8_t solar_dcdc_is_enabled(void)
 {
-    if (HAL_GPIO_ReadPin(SWITCH_DCDC_GPIO_Port, SWITCH_DCDC_Pin) == GPIO_PIN_SET)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return dcdc_enabled;
 }
 
 void solar_dcdc_enable(uint8_t enable)
 {
-    if (enable)
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    if (dcdc_enabled != enable)
     {
-        HAL_GPIO_WritePin(SWITCH_DCDC_GPIO_Port, SWITCH_DCDC_Pin,GPIO_PIN_SET);
-    }   
-    else
-    {
-        HAL_GPIO_WritePin(SWITCH_DCDC_GPIO_Port, SWITCH_DCDC_Pin,GPIO_PIN_RESET);
+        dcdc_enabled = enable;
+        if (enable)
+        {
+            solar_dcdc_set_duty(0);
+
+            GPIO_InitStruct.Pin = PWM_DCDC_Pin;
+            GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+            HAL_GPIO_Init(PWM_DCDC_GPIO_Port, &GPIO_InitStruct);
+
+            GPIO_InitStruct.Pin = PWM_DCDC_N_Pin;
+            GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+            HAL_GPIO_Init(PWM_DCDC_N_GPIO_Port, &GPIO_InitStruct);
+
+
+        }   
+        else
+        {
+            solar_dcdc_set_duty(0);
+
+            HAL_GPIO_WritePin(PWM_DCDC_GPIO_Port, PWM_DCDC_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(PWM_DCDC_N_GPIO_Port, PWM_DCDC_N_Pin, GPIO_PIN_SET);
+
+            GPIO_InitStruct.Pin = PWM_DCDC_Pin;
+            GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+            HAL_GPIO_Init(PWM_DCDC_GPIO_Port, &GPIO_InitStruct);
+
+            GPIO_InitStruct.Pin = PWM_DCDC_N_Pin;
+            GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+            HAL_GPIO_Init(PWM_DCDC_N_GPIO_Port, &GPIO_InitStruct);
+
+        }
     }
+    
+  
 }
 
 void solar_dcdc_set_duty(int16_t duty)

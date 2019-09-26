@@ -25,12 +25,9 @@ void solar_mppt(void)
             //check if deadtime is over
             if (solar.mppt.deadtime  == 0)
             {
-                solar.mppt.mppt_voltage = 0.89 * solar.adc.solar_voltage;
-                //set the output voltage of the dcdc to max
-                solar.dcdc.duty = 0;
                 //enable dcdc
                 solar.dcdc.enable = 1;
-                solar.mppt.deadtime=SOLAR_MPPT_DEADTIME;                
+                solar.mppt.deadtime = SOLAR_MPPT_DEADTIME_ON;
 
             }
             else
@@ -44,13 +41,10 @@ void solar_mppt(void)
     {
         solar_power = solar.adc.solar_current * solar.adc.solar_voltage;
         solar.fan_enable = 0;
-
-        //MPPT operation
-        //increasig duty cycle -> DCDC output voltage is trying to decrease until the potentiometer set limig (~ 10.5V)
-        //decreasing duty cycle -> DCDC output voltage is trying to increase up to the set limit (~ 14.4V)
+        
             
         //check if solar panel is drawing current from the battery
-        /*if (solar.adc.solar_current < 0)
+        if (solar.mppt.deadtime == 0 && (solar.adc.solar_current < 0.2 || solar_power < 1))
         {
             solar.dcdc.duty -= SOLAR_MPPT_DUTY_STEP_BIG;
             //if duty cycle is at min and current is still negative sun must have been gone
@@ -59,52 +53,92 @@ void solar_mppt(void)
                 //stop solar panel draning the battery
                 solar.dcdc.enable = 0;
                 //not allowed to change enable state for the deadtime
-                solar.mppt.deadtime = SOLAR_MPPT_DEADTIME;
+                solar.mppt.deadtime = SOLAR_MPPT_DEADTIME_OFF;
             }
         }
-        else*/
+        else
         {
-
-            if (solar.mppt.deadtime  == 0)
-            {
-                if (solar.adc.solar_voltage < SOLAR_PANEL_VOLTAGE_MIN && solar.adc.solar_current < 1)
-                {
-                    solar.mppt.deadtime = SOLAR_MPPT_DEADTIME;
-                    solar.dcdc.enable = 0;
-                }
-            }
-            else
-            {
-                solar.mppt.deadtime--;
-            }
-
-            if (solar.dcdc.duty == 0 && solar.adc.solar_voltage > 30)
-            {
-                solar_dcdc_enable(0);
-                HAL_Delay(10);
-                solar_dcdc_enable(1);
-            }
-
+            
             if (solar_power > 20)
                 solar.fan_enable = 1;
 
-            if(solar.dcdc.duty==0 && solar.adc.solar_current > 1)
+            if (solar.dcdc.duty == 0)
             {
-                solar.dcdc.duty = 0;
+                solar.mppt.solar_voltage_oc = solar.adc.solar_voltage;
+                solar.mppt.mppt_voltage = 0.9 * solar.adc.solar_voltage;
             }
-            else
-            {
-                float error = solar.mppt.mppt_voltage - solar.adc.solar_voltage;
-                solar.mppt.stateI += error;
                 
-                if (solar.mppt.stateI > solar.mppt.limitI)
-                    solar.mppt.stateI = solar.mppt.limitI;
-                else if (solar.mppt.stateI < -solar.mppt.limitI)  
-                    solar.mppt.stateI = -solar.mppt.limitI;
 
-                solar.dcdc.duty += error * solar.mppt.kP + solar.mppt.kI * solar.mppt.stateI;                
+            if(solar.adc.solar_voltage > solar.mppt.solar_voltage_oc)
+                solar.mppt.solar_voltage_oc = solar.adc.solar_voltage;
+
+            solar.mppt.power_sum += solar_power;
+            if(++solar.mppt.counter == 100)
+            {
+                float power_average = solar.mppt.power_sum / 100.0;
+                solar.mppt.counter = 0;
+                solar.mppt.power_sum = 0;
+                //if current power is greater than previous keep going the same way
+                if (power_average > solar.mppt.power_average)
+                {
+                    
+                    if(solar.mppt.direction == SOLAR_MPPT_DIR_UP)
+                        solar.mppt.mppt_voltage += 0.4;
+                    else
+                        solar.mppt.mppt_voltage -= 0.4;
+                }
+                //if current power is less than previous go the other way
+                else
+                {
+                    if(solar.mppt.direction == SOLAR_MPPT_DIR_UP)
+                    {
+                        solar.mppt.mppt_voltage -= 0.4;
+                        solar.mppt.direction = SOLAR_MPPT_DIR_DOWN;
+                    }
+                    else
+                    {
+                        solar.mppt.mppt_voltage += 0.4;
+                        solar.mppt.direction = SOLAR_MPPT_DIR_UP;
+                    }
+                }
+                /*if(solar.mppt.mppt_scaler < 0.8)
+                    solar.mppt.mppt_scaler = 0.8;
+                else if (solar.mppt.mppt_scaler > 1)
+                    solar.mppt.mppt_scaler = 1;
+
+                //solar.mppt.mppt_voltage = solar.mppt.mppt_scaler * solar.mppt.solar_voltage_oc;
+                */
+                if(solar.mppt.mppt_voltage < SOLAR_PANEL_VOLTAGE_MIN)
+                    solar.mppt.mppt_voltage = SOLAR_PANEL_VOLTAGE_MIN;
+                else if (solar.mppt.mppt_voltage > SOLAR_PANEL_VOLTAGE_MAX)
+                    solar.mppt.mppt_voltage = SOLAR_PANEL_VOLTAGE_MAX;
+                
+                solar.mppt.power_average = power_average;
             }
+            float error = solar.mppt.mppt_voltage - solar.adc.solar_voltage;
+
+            //if (solar.adc.battery_voltage > 12.8)
+            //{
+            //error = -1 - solar.adc.battery_current ;
+            //solar.mppt.kP = 10;
+            //solar.mppt.kI = 0;
+            //}            
+            
+            solar.mppt.stateI += error;
+            
+            if (solar.mppt.stateI > solar.mppt.limitI)
+                solar.mppt.stateI = solar.mppt.limitI;
+            else if (solar.mppt.stateI < -solar.mppt.limitI)  
+                solar.mppt.stateI = -solar.mppt.limitI;
+
+            solar.dcdc.duty -= error * solar.mppt.kP + solar.mppt.kI * solar.mppt.stateI;                
+        
+
+                
         }
+        if (solar.mppt.deadtime > 0)
+            solar.mppt.deadtime--;            
+
     }
 
     if (solar.dcdc.duty > SOLAR_DCDC_MAX_DUTY)

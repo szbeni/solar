@@ -56,7 +56,7 @@ void solar_print_values(void)
     //HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
 
-    snprintf((char *)buffer, 92, "SV%f BV%f SC%f BC%f LC%f D%d E%d DT%d MV%f SI%f\r\n", solar.adc.solar_voltage, solar.adc.battery_voltage, solar.adc.solar_current, solar.adc.battery_current, solar.adc.load_current, solar.dcdc.duty, solar.dcdc.enable, solar.mppt.deadtime, solar.mppt.mppt_voltage, solar.mppt.stateI);
+    snprintf((char *)buffer, 92, "SV%f BV%f SC%f P%f BC%f LC%f D%d E%d DT%d MV%f DI%d\r\n", solar.adc.solar_voltage, solar.adc.battery_voltage, solar.adc.solar_current, solar.mppt.prev_solar_power, solar.adc.battery_current, solar.adc.load_current, solar.dcdc.duty, solar.dcdc.enable, solar.mppt.deadtime, solar.mppt.mppt_voltage, solar.mppt.direction);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
     
@@ -135,6 +135,7 @@ void solar_main(void)
     HAL_Delay(200);
     solar_ads1115_reset_offsets();
 
+    /*
     uint8_t dir=0;
     int16_t counter=0;
     while(1)
@@ -148,26 +149,26 @@ void solar_main(void)
                 solar.counter = 0;                  
             }
             if (dir)
-                counter+=20;
+                counter+=10;
             else
-                counter-=20;
+                counter-=10;
             
-            if (counter > 5000)
+            if (counter >1000)
             {
-                counter = 5000;
+                counter = 1000;
                 dir = 0;
             }
-            if (counter < 0)
+            if (counter < 800)
             {
-                counter = 0;
+                counter = 800;
                 dir = 1;
             }
                 
-            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, counter);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 1500);
 
 
         }
-    }
+    }*/
 
 
     while(1)
@@ -180,39 +181,39 @@ void solar_main(void)
 
             command = solar_comm_receive();
             solar_command_handler(command);
-            //if (command) 
-            //    solar_print_values();
-            //solar_dcdc_enable(solar.dcdc.enable_user);
-            //solar_dcdc_enable(solar.dcdc.enable);
-            //solar_dcdc_set_duty(solar.dcdc.duty);
-            //if ((solar.counter % 2) == 0)
-            //    solar.fan_enable = 1;
-            //else
-            //    solar.fan_enable = 0;
-                
-            solar.mppt.prev_solar_power = solar.adc.solar_current * solar.adc.solar_voltage;
-
+      
+    
             //if((solar.counter % 10) == 0)
             //{
             if (solar.mppt.enable)
-                solar_mppt();
+                 solar_mppt();
             
 
+
+           solar.mppt.prev_solar_power = solar.adc.solar_current * solar.adc.solar_voltage;
 
             solar_dcdc_set_duty(solar.dcdc.duty);
             solar_dcdc_enable(solar.dcdc.enable); 
             //solar_fan_enable(solar.fan_enable);
+            solar_fan_enable(0);
 
             //add a hysteresis for swith on and off voltages
+            if(solar.load_enable_deadtime>0)
+                solar.load_enable_deadtime--;
+
             if (solar.load_enable == 1)
             {
+                
                 if (solar.adc.battery_voltage < SOLAR_BATTERY_MIN_VOLTAGE)
                     solar.load_enable = 0;
             }
             else if (solar.load_enable == 0)
             {
-                if (solar.adc.battery_voltage > SOLAR_BATTERY_VOLTAGE_SWITCH_ON_LOAD)
+                if (solar.adc.battery_voltage > SOLAR_BATTERY_VOLTAGE_SWITCH_ON_LOAD && solar.load_enable_deadtime == 0)
+                {
                     solar.load_enable = 1;
+                    solar.load_enable_deadtime = 1000;
+                }
             }
             solar_load_enable(solar.load_enable_user && solar.load_enable);
             
