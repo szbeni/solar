@@ -2,6 +2,7 @@ from threading import Thread
 from queue import Queue
 from solar_data import SolarData
 import serial
+from time import sleep
 
 class SolarSerial(Thread):
     def __init__(self, settings):
@@ -44,14 +45,20 @@ class SolarSerial(Thread):
         self.running = True
         while self.running:
             self.openSerial()
-            while self.connected:            
-                data = self.serial.readline().decode()
-                if data:
-                    self.handle_data(data)
+            data = ""
+            while self.connected:          
+                received_data = self.serial.readline().decode()
+                if received_data:
+                    data += received_data
+                    if '\r\n' in data:
+                        sliced = data.split('\r\n')
+                        data = ''.join(sliced[1:])
+                        self.handle_data(sliced[0])
 
                 while not self.sendQueue.empty():
-                    data = self.sendQueue.get()
-                    self.serial.write(data)
+                    send_data = self.sendQueue.get()
+                    self.serial.write(send_data)
+            sleep(5)
                     
 
 if __name__ == "__main__":

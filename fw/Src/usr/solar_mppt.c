@@ -18,7 +18,7 @@ void solar_mppt(void)
     if (!solar_dcdc_is_enabled())
     {
         solar.dcdc.enable = 0;
-        solar.fan_enable = 0;
+        //solar.fan_enable = 0;
         //check if there is sun, solar panel voltage is above minimum level
         if (solar.adc.solar_voltage > SOLAR_PANEL_VOLTAGE_MIN)
         {
@@ -40,7 +40,7 @@ void solar_mppt(void)
     else
     {
         solar_power = solar.adc.solar_current * solar.adc.solar_voltage;
-        solar.fan_enable = 0;
+        //solar.fan_enable = 0;
         
             
         //check if solar panel is drawing current from the battery
@@ -59,8 +59,8 @@ void solar_mppt(void)
         else
         {
             
-            if (solar_power > 20)
-                solar.fan_enable = 1;
+            //if (solar_power > 20)
+            //    solar.fan_enable = 1;
 
             if (solar.dcdc.duty == 0)
             {

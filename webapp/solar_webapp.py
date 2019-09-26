@@ -51,7 +51,11 @@ class Monitor(flx.PyWidget):
             self.view.update_info(data)
 
     def button_pressed(self, event):
-        print(event.action)
+        action = event['button_action']
+        button_list = list(SolarData.commands.keys())
+        if action in button_list:
+            keystroke = SolarData.commands[action]['keystroke'].encode()
+            solarSerial.sendQueue.put(keystroke)
 
     def _do_work(self, *events):
         etime = time() + len(events)
@@ -67,19 +71,39 @@ class MonitorView(flx.VBox):
         self.plot_num = 3
         self.plot = []
         self.plot_combobox = []
+        self.plot_label = []
+        self.plot_latest_val = []
+        self.latest_params_names = {}
+        self.latest_params_values = {}
+
+
         with flx.HSplit(flex=1):
             with flx.GroupWidget(flex=1, title="Plot options"):  
                     with flx.VBox():
-                        with flx.HBox():
-                            self.enable_load_button = flx.Button(text='Enable Load')
-                            setattr(self.enable_load_button,'button_action', 'enable_load')
-                            self.enable_load_button.reaction(self._on_button_pressed, 'pointer_click')
-                            self.enable_load_radio = flx.RadioButton(text='')
-                            flx.Widget(flex=1)
+                        self.buttons = {}
+                        button_list = list(SolarData.commands.keys())
+                        for button_name in button_list:
+                            with flx.HBox():    
+                                self.buttons[button_name] = flx.Button(text=button_name)
+                                setattr(self.buttons[button_name],'button_action', button_name)
+                                self.buttons[button_name].reaction(self._on_button_pressed, 'pointer_click')
+                                flx.Widget(flex=1)
 
                         for i in range(0, self.plot_num):
-                            self.plot_combobox[i] = flx.ComboBox(options=SolarData.params, editable=False, selected_index=i) 
-                            self.plot_combobox[i].reaction(self.combobox_changed, 'user_selected')
+                            with flx.HBox():
+                                self.plot_combobox[i] = flx.ComboBox(options=list(SolarData.params.keys()), editable=False, selected_index=i) 
+                                self.plot_combobox[i].reaction(self.combobox_changed, 'user_selected')
+                                self.plot_label[i] = flx.Label(text='Latest value:')
+                                self.plot_latest_val[i] = flx.Label(text='')
+                                flx.Widget(flex=1)
+
+                        for i in range(0, len(SolarData.params.keys())):
+                            with flx.HBox():
+                                name = list(SolarData.params.keys())[i]
+                                self.latest_params_names[name] = flx.Label(text='{0}:'.format(name))
+                                self.latest_params_values[name] = flx.Label(text='NaN')
+                                flx.Widget(flex=1)
+
                         flx.Widget(flex=1)
 
             with flx.VBox(flex=4):
@@ -97,6 +121,9 @@ class MonitorView(flx.VBox):
     def combobox_changed(self, event):
         idx = self.plot_combobox.index(event.source)
         self.plot[idx].set_data([], [])
+        param = self.plot_combobox[idx].selected_key
+        self.plot[idx].set_yrange(SolarData.params[param]['range'])
+
 
     @flx.action
     def update_info(self, info):
@@ -107,9 +134,13 @@ class MonitorView(flx.VBox):
 
         if info.serial_data:
             data = info.serial_data
+            for d in data:
+                if d in self.latest_params_values:
+                    self.latest_params_values[d].set_text(data[d])
+
             for i in range(self.plot_num):
                 param_idx = self.plot_combobox[i].selected_index
-                param_name = SolarData.params[param_idx]
+                param_name = list(SolarData.params.keys())[param_idx]
                 
                 times = list(self.plot[i].xdata)
                 times.append(data['time'] - self.start_time)
@@ -119,6 +150,7 @@ class MonitorView(flx.VBox):
                 ydata.append(data[param_name])
                 ydata = ydata[-self.nsamples:]
 
+                self.plot_latest_val[i].set_text(data[param_name])
                 self.plot[i].set_data(times, ydata)
 
 # Create global relay
@@ -126,6 +158,8 @@ solarSerial = SolarSerial(SolarSettings.serial_settings)
 solarSerial.start()
 a = flx.App(Monitor)
 a.serve()
+flx.config.hostname = '0.0.0.0'
+flx.config.port = 49190
 
 def main_loop():
     if not solarSerial.recvQueue.empty():

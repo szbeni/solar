@@ -56,7 +56,7 @@ void solar_print_values(void)
     //HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
 
-    snprintf((char *)buffer, 92, "SV%f BV%f SC%f P%f BC%f LC%f D%d E%d DT%d MV%f DI%d\r\n", solar.adc.solar_voltage, solar.adc.battery_voltage, solar.adc.solar_current, solar.mppt.prev_solar_power, solar.adc.battery_current, solar.adc.load_current, solar.dcdc.duty, solar.dcdc.enable, solar.mppt.deadtime, solar.mppt.mppt_voltage, solar.mppt.direction);
+    snprintf((char *)buffer, 92, "SV%fBV%fSC%fBC%fLC%fDD%fDE%dMD%dMV%fMR%dMP%fME%dLE%dFE%d\r\n", solar.adc.solar_voltage, solar.adc.battery_voltage, solar.adc.solar_current, solar.adc.battery_current, solar.adc.load_current, (float)solar.dcdc.duty/50.0, solar.dcdc.enable, solar.mppt.deadtime, solar.mppt.mppt_voltage, solar.mppt.direction, solar.mppt.power_average, solar.mppt.enable, solar.load_enable&&solar.load_enable_user,solar.fan_enable);
     HAL_UART_Transmit(&huart1,buffer,strlen((char*)buffer),0xFFFF);
 
     
@@ -194,8 +194,7 @@ void solar_main(void)
 
             solar_dcdc_set_duty(solar.dcdc.duty);
             solar_dcdc_enable(solar.dcdc.enable); 
-            //solar_fan_enable(solar.fan_enable);
-            solar_fan_enable(0);
+            solar_fan_enable(solar.fan_enable);
 
             //add a hysteresis for swith on and off voltages
             if(solar.load_enable_deadtime>0)
