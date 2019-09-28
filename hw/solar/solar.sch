@@ -117,17 +117,6 @@ Wire Wire Line
 	7350 2300 7500 2300
 $Comp
 L Device:R R?
-U 1 1 5D326AA8
-P 6650 1200
-F 0 "R?" H 6720 1246 50  0000 L CNN
-F 1 "3k" H 6720 1155 50  0000 L CNN
-F 2 "" V 6580 1200 50  0001 C CNN
-F 3 "~" H 6650 1200 50  0001 C CNN
-	1    6650 1200
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R R?
 U 1 1 5D326FCA
 P 7350 2500
 F 0 "R?" H 7420 2546 50  0000 L CNN
@@ -767,8 +756,6 @@ Text GLabel 3400 3300 2    50   Input ~ 0
 SWITCH_DCDC
 Wire Wire Line
 	7300 1050 7400 1050
-Text GLabel 6550 750  0    50   Input ~ 0
-SWITCH_DCDC
 $Comp
 L power:GND #PWR?
 U 1 1 5D6BE550
@@ -861,52 +848,8 @@ F 3 "~" H 7600 850 50  0001 C CNN
 	1    7600 850 
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:D D?
-U 1 1 5D46B836
-P 6800 950
-F 0 "D?" H 6800 734 50  0000 C CNN
-F 1 "D" H 6800 825 50  0000 C CNN
-F 2 "" H 6800 950 50  0001 C CNN
-F 3 "~" H 6800 950 50  0001 C CNN
-	1    6800 950 
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	7300 950  7400 950 
-$Comp
-L Device:R R?
-U 1 1 5D481378
-P 7150 950
-F 0 "R?" V 6943 950 50  0000 C CNN
-F 1 "15k" V 7034 950 50  0000 C CNN
-F 2 "" V 7080 950 50  0001 C CNN
-F 3 "~" H 7150 950 50  0001 C CNN
-	1    7150 950 
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	6950 950  7000 950 
-Wire Wire Line
-	6550 750  6650 750 
-Wire Wire Line
-	6550 950  6650 950 
-Text GLabel 6550 950  0    50   Input ~ 0
-PWM_DCDC
-Connection ~ 6650 750 
-Wire Wire Line
-	6650 750  7400 750 
 Wire Wire Line
 	6750 1750 7350 1750
-Wire Wire Line
-	6650 750  6650 1050
-Wire Wire Line
-	6650 1350 7300 1350
-Wire Wire Line
-	7300 1350 7300 1450
-Wire Wire Line
-	7300 1050 7300 1350
-Connection ~ 7300 1350
 Wire Wire Line
 	3150 3300 3400 3300
 $Comp
@@ -1310,22 +1253,18 @@ Wire Wire Line
 Text GLabel 350  -2500 0    50   Input ~ 0
 PWM_DCDC
 Wire Wire Line
-	350  -2500 450  -2500
-Wire Wire Line
 	850  -2500 900  -2500
 $Comp
 L Device:R R?
 U 1 1 5D8D13FE
-P 450 -2900
-F 0 "R?" V 243 -2900 50  0000 C CNN
-F 1 "10k" V 334 -2900 50  0000 C CNN
-F 2 "" V 380 -2900 50  0001 C CNN
-F 3 "~" H 450 -2900 50  0001 C CNN
-	1    450  -2900
+P 900 -2950
+F 0 "R?" V 693 -2950 50  0000 C CNN
+F 1 "100k" V 784 -2950 50  0000 C CNN
+F 2 "" V 830 -2950 50  0001 C CNN
+F 3 "~" H 900 -2950 50  0001 C CNN
+	1    900  -2950
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	900  -2550 900  -2500
 Connection ~ 900  -2500
 Wire Wire Line
 	900  -2500 950  -2500
@@ -1353,83 +1292,32 @@ F 3 "" H 1250 -2200 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1250 -2300 1250 -2200
-Connection ~ 450  -2500
-Wire Wire Line
-	450  -2500 550  -2500
-Wire Wire Line
-	2200 -2800 2200 -2900
-$Comp
-L Transistor_BJT:BC858 Q?
-U 1 1 5D94DC3E
-P 2100 -2600
-F 0 "Q?" H 2291 -2646 50  0000 L CNN
-F 1 "BC858" H 2291 -2555 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SOT-23" H 2300 -2675 50  0001 L CIN
-F 3 "http://www.fairchildsemi.com/ds/BC/BC856.pdf" H 2100 -2600 50  0001 L CNN
-	1    2100 -2600
-	1    0    0    1   
-$EndComp
-Wire Wire Line
-	2200 -2400 2200 -2200
-Wire Wire Line
-	2200 -3350 2200 -3550
-Wire Wire Line
-	2200 -3550 3150 -3550
 Wire Wire Line
 	3150 -3550 3150 -3350
-Wire Wire Line
-	1850 -2600 1850 -3150
-Wire Wire Line
-	1750 -3150 1850 -3150
-$Comp
-L Device:R R?
-U 1 1 5D9E5856
-P 1600 -3150
-F 0 "R?" V 1393 -3150 50  0000 C CNN
-F 1 "1k" V 1484 -3150 50  0000 C CNN
-F 2 "" V 1530 -3150 50  0001 C CNN
-F 3 "~" H 1600 -3150 50  0001 C CNN
-	1    1600 -3150
-	0    1    1    0   
-$EndComp
-Connection ~ 1850 -3150
-Wire Wire Line
-	1850 -3150 1900 -3150
-Wire Wire Line
-	1900 -2600 1850 -2600
 $Comp
 L Device:R R?
 U 1 1 5DA0845A
 P 1250 -3350
 F 0 "R?" V 1043 -3350 50  0000 C CNN
-F 1 "10k" V 1134 -3350 50  0000 C CNN
+F 1 "3k" V 1134 -3350 50  0000 C CNN
 F 2 "" V 1180 -3350 50  0001 C CNN
 F 3 "~" H 1250 -3350 50  0001 C CNN
 	1    1250 -3350
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	1450 -3150 1250 -3150
-Wire Wire Line
-	1250 -3150 1250 -3200
-Wire Wire Line
-	2200 -3550 1250 -3550
-Wire Wire Line
 	1250 -3550 1250 -3500
-Connection ~ 2200 -3550
 $Comp
 L Device:D D?
 U 1 1 5DA2D81D
-P 950 -3550
-F 0 "D?" H 950 -3766 50  0000 C CNN
-F 1 "D" H 950 -3675 50  0000 C CNN
-F 2 "" H 950 -3550 50  0001 C CNN
-F 3 "~" H 950 -3550 50  0001 C CNN
-	1    950  -3550
+P 1100 -3550
+F 0 "D?" H 1100 -3766 50  0000 C CNN
+F 1 "D" H 1100 -3675 50  0000 C CNN
+F 2 "" H 1100 -3550 50  0001 C CNN
+F 3 "~" H 1100 -3550 50  0001 C CNN
+	1    1100 -3550
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	1100 -3550 1250 -3550
 Connection ~ 1250 -3550
 $Comp
 L power:+12V #PWR?
@@ -1444,12 +1332,6 @@ F 3 "" H 450 -3800 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	450  -3800 450  -3550
-Wire Wire Line
-	1250 -3150 1250 -2700
-Connection ~ 1250 -3150
-Connection ~ 2200 -2900
-Wire Wire Line
-	2200 -2900 2200 -2950
 Text GLabel 7650 1600 2    50   Input ~ 0
 V_SOLAR
 Wire Wire Line
@@ -1461,8 +1343,6 @@ Wire Wire Line
 	7600 1750 8350 1750
 Text GLabel 4500 -3400 0    50   Input ~ 0
 V_SOLAR
-Wire Wire Line
-	2200 -2200 3150 -2200
 $Comp
 L Device:CP C?
 U 1 1 5DB348C3
@@ -1476,31 +1356,10 @@ F 3 "~" H 3150 -3200 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	3150 -3050 3150 -2200
-Connection ~ 3150 -2200
-Wire Wire Line
-	450  -3550 450  -3050
-Connection ~ 450  -3550
-Wire Wire Line
-	450  -3550 800  -3550
-Wire Wire Line
-	450  -2750 450  -2500
 Wire Wire Line
 	4500 -3400 5000 -3400
 Wire Wire Line
 	5000 -3400 5000 -3100
-Wire Wire Line
-	2200 -2900 4700 -2900
-$Comp
-L Transistor_BJT:BC858 Q?
-U 1 1 5DC00DE0
-P 2150 -950
-F 0 "Q?" H 2341 -996 50  0000 L CNN
-F 1 "BC858" H 2341 -905 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SOT-23" H 2350 -1025 50  0001 L CIN
-F 3 "http://www.fairchildsemi.com/ds/BC/BC856.pdf" H 2150 -950 50  0001 L CNN
-	1    2150 -950
-	1    0    0    1   
-$EndComp
 $Comp
 L power:GND #PWR?
 U 1 1 5DC488FA
@@ -1512,34 +1371,19 @@ F 3 "" H 5000 -950 50  0001 C CNN
 	1    5000 -950
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	1950 -1500 1900 -1500
-Wire Wire Line
-	1900 -950 1950 -950
-Wire Wire Line
-	1900 -1500 1900 -950
 Text GLabel 350  -1250 0    50   Input ~ 0
 PWM_DCDC_N
-Wire Wire Line
-	350  -1250 450  -1250
-Wire Wire Line
-	850  -1250 900  -1250
 $Comp
 L Device:R R?
 U 1 1 5DCAD9C6
-P 450 -1650
-F 0 "R?" V 243 -1650 50  0000 C CNN
-F 1 "10k" V 334 -1650 50  0000 C CNN
-F 2 "" V 380 -1650 50  0001 C CNN
-F 3 "~" H 450 -1650 50  0001 C CNN
-	1    450  -1650
+P 900 -1550
+F 0 "R?" V 693 -1550 50  0000 C CNN
+F 1 "10k" V 784 -1550 50  0000 C CNN
+F 2 "" V 830 -1550 50  0001 C CNN
+F 3 "~" H 900 -1550 50  0001 C CNN
+	1    900  -1550
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	900  -1300 900  -1250
-Connection ~ 900  -1250
-Wire Wire Line
-	900  -1250 950  -1250
 $Comp
 L Device:R R?
 U 1 1 5DCAD9D5
@@ -1562,11 +1406,6 @@ F 3 "" H 1250 -700 50  0001 C CNN
 	1    1250 -700
 	1    0    0    -1  
 $EndComp
-Connection ~ 450  -1250
-Wire Wire Line
-	450  -1250 550  -1250
-Wire Wire Line
-	450  -1500 450  -1250
 $Comp
 L Device:R R?
 U 1 1 5DCE3AB2
@@ -1583,9 +1422,7 @@ Wire Wire Line
 Wire Wire Line
 	1250 -1800 1250 -1850
 Wire Wire Line
-	1250 -1850 450  -1850
-Wire Wire Line
-	450  -1850 450  -1800
+	1250 -1850 900  -1850
 $Comp
 L power:+12V #PWR?
 U 1 1 5DD1A39A
@@ -1597,42 +1434,6 @@ F 3 "" H 450 -1850 50  0001 C CNN
 	1    450  -1850
 	1    0    0    -1  
 $EndComp
-Connection ~ 450  -1850
-$Comp
-L Device:R R?
-U 1 1 5DD2DD7C
-P 1600 -1500
-F 0 "R?" V 1393 -1500 50  0000 C CNN
-F 1 "1k" V 1484 -1500 50  0000 C CNN
-F 2 "" V 1530 -1500 50  0001 C CNN
-F 3 "~" H 1600 -1500 50  0001 C CNN
-	1    1600 -1500
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	1750 -1500 1900 -1500
-Connection ~ 1900 -1500
-Wire Wire Line
-	1450 -1500 1250 -1500
-Connection ~ 1250 -1500
-Wire Wire Line
-	1250 -1850 2250 -1850
-Wire Wire Line
-	2250 -1850 2250 -1700
-Connection ~ 1250 -1850
-$Comp
-L power:GND #PWR?
-U 1 1 5DD749DF
-P 2250 -700
-F 0 "#PWR?" H 2250 -950 50  0001 C CNN
-F 1 "GND" H 2255 -873 50  0000 C CNN
-F 2 "" H 2250 -700 50  0001 C CNN
-F 3 "" H 2250 -700 50  0001 C CNN
-	1    2250 -700
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	2250 -700 2250 -750
 Wire Wire Line
 	1250 -1050 1250 -700
 Wire Wire Line
@@ -1640,13 +1441,6 @@ Wire Wire Line
 Connection ~ 5000 -2200
 Wire Wire Line
 	5000 -2700 5000 -2200
-Wire Wire Line
-	4700 -1250 2250 -1250
-Wire Wire Line
-	2250 -1300 2250 -1250
-Connection ~ 2250 -1250
-Wire Wire Line
-	2250 -1250 2250 -1150
 Wire Wire Line
 	5000 -2200 5000 -1450
 $Comp
@@ -1693,17 +1487,6 @@ Text GLabel 7450 -2200 2    50   Input ~ 0
 DCDC_VOUT
 $Comp
 L Transistor_BJT:MMBT5551L Q?
-U 1 1 5DED2527
-P 2100 -3150
-F 0 "Q?" H 2291 -3104 50  0000 L CNN
-F 1 "MMBT5551L" H 2291 -3195 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SOT-23" H 2300 -3225 50  0001 L CIN
-F 3 "www.onsemi.com/pub/Collateral/MMBT5550LT1-D.PDF" H 2100 -3150 50  0001 L CNN
-	1    2100 -3150
-	1    0    0    -1  
-$EndComp
-$Comp
-L Transistor_BJT:MMBT5551L Q?
 U 1 1 5DED31DE
 P 1150 -2500
 F 0 "Q?" H 1341 -2454 50  0000 L CNN
@@ -1724,15 +1507,219 @@ F 3 "www.onsemi.com/pub/Collateral/MMBT5550LT1-D.PDF" H 1150 -1250 50  0001 L CN
 	1    1150 -1250
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	1250 -1450 4700 -1450
+Wire Wire Line
+	4700 -1450 4700 -1250
+Connection ~ 1250 -1450
+Wire Wire Line
+	350  -2500 550  -2500
+Wire Wire Line
+	900  -2800 900  -2500
+Wire Wire Line
+	900  -3550 900  -3100
+Wire Wire Line
+	450  -3550 900  -3550
+Wire Wire Line
+	900  -3550 950  -3550
+Connection ~ 900  -3550
+Wire Wire Line
+	1250 -3200 1250 -2900
 $Comp
-L Transistor_BJT:MMBT5551L Q?
-U 1 1 5DED41AC
-P 2150 -1500
-F 0 "Q?" H 2341 -1454 50  0000 L CNN
-F 1 "MMBT5551L" H 2341 -1545 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SOT-23" H 2350 -1575 50  0001 L CIN
-F 3 "www.onsemi.com/pub/Collateral/MMBT5550LT1-D.PDF" H 2150 -1500 50  0001 L CNN
-	1    2150 -1500
+L Device:R R?
+U 1 1 5D9631D3
+P 1600 -2900
+F 0 "R?" V 1393 -2900 50  0000 C CNN
+F 1 "470R" V 1484 -2900 50  0000 C CNN
+F 2 "" V 1530 -2900 50  0001 C CNN
+F 3 "~" H 1600 -2900 50  0001 C CNN
+	1    1600 -2900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1450 -2900 1250 -2900
+Connection ~ 1250 -2900
+Wire Wire Line
+	1250 -2900 1250 -2700
+Wire Wire Line
+	1750 -2900 4700 -2900
+Wire Wire Line
+	1250 -3550 3150 -3550
+Wire Wire Line
+	850  -1250 900  -1250
+Wire Wire Line
+	900  -1400 900  -1250
+Connection ~ 900  -1250
+Wire Wire Line
+	900  -1250 950  -1250
+Wire Wire Line
+	350  -1250 550  -1250
+Wire Wire Line
+	900  -1700 900  -1850
+Connection ~ 900  -1850
+Wire Wire Line
+	900  -1850 450  -1850
+Wire Wire Line
+	7300 1050 7300 1450
+Text GLabel 7150 750  0    50   Input ~ 0
+PWM_DCDC
+Wire Wire Line
+	7400 750  7150 750 
+Text GLabel 7150 950  0    50   Input ~ 0
+PWM_DCDC_N
+Wire Wire Line
+	7150 950  7400 950 
+$Comp
+L Amplifier_Operational:LM358 U?
+U 1 1 5DA1225C
+P 9900 -1400
+F 0 "U?" H 9900 -1033 50  0000 C CNN
+F 1 "LM358" H 9900 -1124 50  0000 C CNN
+F 2 "" H 9900 -1400 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/lm2904-n.pdf" H 9900 -1400 50  0001 C CNN
+	1    9900 -1400
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:R R?
+U 1 1 5DA17D96
+P 8600 -1450
+F 0 "R?" V 8393 -1450 50  0000 C CNN
+F 1 "0.007R" V 8484 -1450 50  0000 C CNN
+F 2 "" V 8530 -1450 50  0001 C CNN
+F 3 "~" H 8600 -1450 50  0001 C CNN
+	1    8600 -1450
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5DA1A421
+P 9250 -1300
+F 0 "R?" V 9043 -1300 50  0000 C CNN
+F 1 "1k8" V 9134 -1300 50  0000 C CNN
+F 2 "" V 9180 -1300 50  0001 C CNN
+F 3 "~" H 9250 -1300 50  0001 C CNN
+	1    9250 -1300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5DA1A866
+P 9250 -1600
+F 0 "R?" V 9043 -1600 50  0000 C CNN
+F 1 "1k8" V 9134 -1600 50  0000 C CNN
+F 2 "" V 9180 -1600 50  0001 C CNN
+F 3 "~" H 9250 -1600 50  0001 C CNN
+	1    9250 -1600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5DA2FEDD
+P 9900 -950
+F 0 "R?" V 9693 -950 50  0000 C CNN
+F 1 "100k" V 9784 -950 50  0000 C CNN
+F 2 "" V 9830 -950 50  0001 C CNN
+F 3 "~" H 9900 -950 50  0001 C CNN
+	1    9900 -950
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	9100 -1600 8600 -1600
+Wire Wire Line
+	8600 -1300 9100 -1300
+Wire Wire Line
+	9400 -1300 9550 -1300
+Wire Wire Line
+	9550 -1300 9550 -950
+Wire Wire Line
+	9550 -950 9750 -950
+Connection ~ 9550 -1300
+Wire Wire Line
+	9550 -1300 9600 -1300
+Wire Wire Line
+	10050 -950 10200 -950
+Wire Wire Line
+	10200 -1400 10200 -950
+$Comp
+L Device:R R?
+U 1 1 5DAAF110
+P 9850 -2050
+F 0 "R?" V 9643 -2050 50  0000 C CNN
+F 1 "100k" V 9734 -2050 50  0000 C CNN
+F 2 "" V 9780 -2050 50  0001 C CNN
+F 3 "~" H 9850 -2050 50  0001 C CNN
+	1    9850 -2050
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	9550 -1500 9550 -1600
+Wire Wire Line
+	9550 -2050 9700 -2050
+Wire Wire Line
+	9550 -1500 9600 -1500
+Wire Wire Line
+	9400 -1600 9550 -1600
+Connection ~ 9550 -1600
+Wire Wire Line
+	9550 -1600 9550 -2050
+Wire Wire Line
+	10200 -2050 10200 -1900
+Wire Wire Line
+	10000 -2050 10200 -2050
+$Comp
+L power:GND #PWR?
+U 1 1 5DAEBE09
+P 10200 -1900
+F 0 "#PWR?" H 10200 -2150 50  0001 C CNN
+F 1 "GND" H 10205 -2073 50  0000 C CNN
+F 2 "" H 10200 -1900 50  0001 C CNN
+F 3 "" H 10200 -1900 50  0001 C CNN
+	1    10200 -1900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5DAEF80C
+P 8600 -1050
+F 0 "#PWR?" H 8600 -1300 50  0001 C CNN
+F 1 "GND" H 8605 -1223 50  0000 C CNN
+F 2 "" H 8600 -1050 50  0001 C CNN
+F 3 "" H 8600 -1050 50  0001 C CNN
+	1    8600 -1050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8600 -1050 8600 -1300
+Connection ~ 8600 -1300
+Wire Wire Line
+	8600 -1600 8600 -1900
+Connection ~ 8600 -1600
+$Comp
+L Amplifier_Operational:LM358 U?
+U 2 1 5DB310F4
+P 10800 -1300
+F 0 "U?" H 10800 -933 50  0000 C CNN
+F 1 "LM358" H 10800 -1024 50  0000 C CNN
+F 2 "" H 10800 -1300 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/lm2904-n.pdf" H 10800 -1300 50  0001 C CNN
+	2    10800 -1300
+	1    0    0    -1  
+$EndComp
+Connection ~ 10200 -1400
+Wire Wire Line
+	10200 -1400 10500 -1400
+Wire Wire Line
+	10500 -1200 10450 -1200
+Wire Wire Line
+	10450 -1200 10450 -950
+Wire Wire Line
+	10450 -950 11100 -950
+Wire Wire Line
+	11100 -950 11100 -1300
+Wire Wire Line
+	11100 -1300 11350 -1300
+Connection ~ 11100 -1300
+Text GLabel 11350 -1300 2    50   Input ~ 0
+ADC_SOLAR_CURR
 $EndSCHEMATC
