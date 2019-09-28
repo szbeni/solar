@@ -1,5 +1,7 @@
 #include "solar.h"
 
+static uint8_t dcdc_enabled=1;
+
 void solar_dcdc_init(void)
 {
     HAL_TIM_Base_Start(&htim1);
@@ -7,8 +9,6 @@ void solar_dcdc_init(void)
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
 }
 
-
-static uint8_t dcdc_enabled=1;
 uint8_t solar_dcdc_is_enabled(void)
 {
     return dcdc_enabled;
@@ -55,8 +55,6 @@ void solar_dcdc_enable(uint8_t enable)
 
         }
     }
-    
-  
 }
 
 void solar_dcdc_set_duty(int16_t duty)

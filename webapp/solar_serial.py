@@ -47,7 +47,11 @@ class SolarSerial(Thread):
             self.openSerial()
             data = ""
             while self.connected:          
-                received_data = self.serial.readline().decode()
+                try:
+                    received_data = self.serial.readline().decode()
+                except:
+                    #print("Failed to read data")
+                    received_data = None
                 if received_data:
                     data += received_data
                     if '\r\n' in data:

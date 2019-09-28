@@ -11,7 +11,6 @@ class SolarData():
         'Toggle MPPT': {'keystroke': '6'},
         
     }
-    #SV%fBV%fSC%fBC%fLC%fDD%dDE%dMD%dMV%fMR%dMP%fME%dLE%dFE%d
     params = {
         'Battery Voltage': {'abbrev': 'BV', 'range': (5, 20) },
         'Battery Current': {'abbrev': 'BC', 'range': (-10, 10)},
@@ -24,9 +23,11 @@ class SolarData():
         'MPPT Deadtime': {'abbrev': 'MD', 'range': (0, 1000)},
         'MPPT Voltage': {'abbrev': 'MV', 'range': (0, 40)},
         'MPPT Direction': {'abbrev': 'MR', 'range': (0, 1)},
-        'MPPT Power': {'abbrev': 'MP', 'range': (0, 250)},
+        'MPPT Power': {'abbrev': 'MP', 'range': (0, 120)},
+        'MPPT State': {'abbrev': 'MS', 'range': (0, 2)},
         'Load Enable': {'abbrev': 'LE', 'range': (0, 1)},
-        'Fan Enabled': {'abbrev': 'FE', 'range': (0, 1)}
+        'Fan Speed': {'abbrev': 'FS', 'range': (0, 255)},
+        'Error Counter': {'abbrev': 'EC', 'range': (0, 255)}
     }
     
     time = 0

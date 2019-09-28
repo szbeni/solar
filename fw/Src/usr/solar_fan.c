@@ -1,14 +1,17 @@
 #include "solar.h"
 
-
-void solar_fan_enable(uint8_t enable)
+void solar_fan_init(void)
 {
-    if (enable)
+    HAL_TIM_Base_Start(&htim3);
+    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+}
+
+void solar_fan_set_speed(uint8_t speed)
+{
+    if (speed != solar.fan_speed)
     {
-        HAL_GPIO_WritePin(SWITCH_FAN_GPIO_Port, SWITCH_FAN_Pin, GPIO_PIN_SET);
-    }   
-    else
-    {
-        HAL_GPIO_WritePin(SWITCH_FAN_GPIO_Port, SWITCH_FAN_Pin, GPIO_PIN_RESET);
+        solar.fan_speed = speed;
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, speed);
     }
+        
 }

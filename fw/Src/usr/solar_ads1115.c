@@ -10,9 +10,8 @@ void solar_ads1115_reset_offsets(void)
 	solar_ads1115_read();
 	//only for the curret chanels
 	for( uint8_t i = 1; i < 4; i++) 
-		solar.adc.ads1115_offset[i] = 16384-solar.adc.ads1115_values[i];
+		solar.adc.ads1115_offset[i] = 16384 - solar.adc.ads1115_values[i];
 }
-
 
 void solar_ads1115_read(void)
 {

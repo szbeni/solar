@@ -87,6 +87,7 @@ class MonitorView(flx.VBox):
                                 self.buttons[button_name] = flx.Button(text=button_name)
                                 setattr(self.buttons[button_name],'button_action', button_name)
                                 self.buttons[button_name].reaction(self._on_button_pressed, 'pointer_click')
+                                self.buttons[button_name].reaction(self._on_button_down, 'pointer_down')
                                 flx.Widget(flex=1)
 
                         for i in range(0, self.plot_num):
@@ -114,7 +115,15 @@ class MonitorView(flx.VBox):
     def button_pressed(self, action):        
         return {'button_action': action}
 
+    @flx.emitter
+    def button_down(self, action):        
+        print("button down")
+        #return {'button_action': action}
+
     def _on_button_pressed(self, event):
+        self.button_pressed(event.source.button_action)
+
+    def _on_button_down(self, event):
         self.button_pressed(event.source.button_action)
 
     #clear data when plotting changed
