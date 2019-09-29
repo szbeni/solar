@@ -14,6 +14,9 @@ Hardware, Firmware, Webapp for visualization
  - FAN for cooling power electronics
  - Bluetooth UART module for communnication
 
+<img src="https://github.com/szbeni/solar/raw/master/res/prototype01.jpg" width="400">
+
+
 ## Firmware:
 - Written in C
 - STCubeMX generated base project + user code
