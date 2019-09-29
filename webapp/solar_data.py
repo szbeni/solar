@@ -12,7 +12,7 @@ class SolarData():
         
     }
     params = {
-        'Battery Voltage': {'abbrev': 'BV', 'range': (5, 20) },
+        'Battery Voltage': {'abbrev': 'BV', 'range': (10, 15) },
         'Battery Current': {'abbrev': 'BC', 'range': (-10, 10)},
         'Solar Voltage': {'abbrev': 'SV', 'range': (0, 40)},
         'Solar Current': {'abbrev': 'SC', 'range': (-10, 10)},
@@ -23,7 +23,7 @@ class SolarData():
         'MPPT Deadtime': {'abbrev': 'MD', 'range': (0, 1000)},
         'MPPT Voltage': {'abbrev': 'MV', 'range': (0, 40)},
         'MPPT Direction': {'abbrev': 'MR', 'range': (0, 1)},
-        'MPPT Power': {'abbrev': 'MP', 'range': (0, 120)},
+        'MPPT Power': {'abbrev': 'MP', 'range': (0, 200)},
         'MPPT State': {'abbrev': 'MS', 'range': (0, 2)},
         'Load Enable': {'abbrev': 'LE', 'range': (0, 1)},
         'Fan Speed': {'abbrev': 'FS', 'range': (0, 255)},

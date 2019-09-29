@@ -20,9 +20,9 @@
 #define SOLAR_MPPT_FAN_ENABLE_POWER 35                  //when solar power is more that 35W enable the fan
 #define SOLAR_MPPT_FAN_ENABLE_DEADTIME   1000           //deadtime
 
-#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER   14.2    //when to enter to float charging mode from max power
-#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL 13.8    //what is the float charging voltage (demand for the controller)
-#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT    13.2    //when to leave float charging mode and go back to max power mode
+#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER   14.4    //when to enter to float charging mode from max power
+#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL 14.2    //what is the float charging voltage (demand for the controller)
+#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT    13.9    //when to leave float charging mode and go back to max power mode
 
 //Modify it by hand after measured everything
 #define CALIB_SOLAR_VOLTAGE_OFFSET 195
@@ -49,6 +49,7 @@ typedef struct
     uint8_t state;
     uint16_t deadtime;
 
+    uint16_t float_charge_exit_counter;
     uint8_t enable;
     float prev_solar_power;
     float power_sum;

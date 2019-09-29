@@ -12,7 +12,7 @@ static void PI_settings_max_power(void)
 static void PI_settings_float_charging(void)
 {
     solar.mppt.kI = 0;
-    solar.mppt.kP = 1;
+    solar.mppt.kP = 3;
     solar.mppt.limitI = 0;
     solar.mppt.stateI = 0;
 }
@@ -67,8 +67,13 @@ void solar_mppt(void)
     uint8_t fan_speed = 0;
     //check if we need to enable fan
     if (solar_power > 0)
-        fan_speed = (uint8_t)(solar_power * 2.0);
-
+    {
+        float speed = solar_power * 2.0;
+        if (speed > 255)
+            speed = 255;
+        fan_speed = (uint8_t)(speed); 
+    }
+        
     solar_fan_set_speed(fan_speed);
    
     
@@ -98,6 +103,13 @@ void solar_mppt(void)
     }
     else
     {
+        //set mppt voltage back if it has crawled away
+        if (solar.dcdc.duty == 0)
+        {
+            if (solar.adc.solar_voltage < solar.mppt.mppt_voltage)
+                solar.mppt.mppt_voltage = 0.9* solar.adc.solar_voltage;
+        }
+        
         //check solar panel is sapping the battery..
         if(solar.mppt.deadtime == 0 && solar.adc.solar_voltage < solar.adc.battery_voltage)
         {
@@ -173,18 +185,28 @@ void solar_mppt(void)
 
                 if (solar.mppt.deadtime == 0 && solar.adc.battery_voltage > SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER)
                 {
-                    solar_mppt_change_state(SOLAR_MPPT_STATE_FLOAT_CHARGING, SOLAR_MPPT_DEADTIME_DEFAULT);
+                    solar_mppt_change_state(SOLAR_MPPT_STATE_FLOAT_CHARGING, 100);
                 }
             }
 
             if (solar.mppt.state == SOLAR_MPPT_STATE_FLOAT_CHARGING)
             {
                 float output = solar_mppt_PI_controller(SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL - solar.adc.battery_voltage);
-                solar.dcdc.duty -= output;
+                solar.dcdc.duty += output;
 
-                if (solar.mppt.deadtime == 0 && solar.adc.battery_voltage < SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT)
+                if (solar.adc.battery_voltage < SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT)
                 {
-                    solar_mppt_change_state(SOLAR_MPPT_STATE_MAX_POWER, SOLAR_MPPT_DEADTIME_DEFAULT);
+                    if (solar.mppt.float_charge_exit_counter > 0)
+                        solar.mppt.float_charge_exit_counter--;
+                }
+                else
+                {
+                    solar.mppt.float_charge_exit_counter = 1000;
+                }
+
+                if (solar.mppt.deadtime == 0 &&  solar.mppt.float_charge_exit_counter == 0)
+                {
+                    solar_mppt_change_state(SOLAR_MPPT_STATE_MAX_POWER, 100);
                 }
             }                        
         }
