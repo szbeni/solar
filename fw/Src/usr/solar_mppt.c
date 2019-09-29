@@ -12,7 +12,7 @@ static void PI_settings_max_power(void)
 static void PI_settings_float_charging(void)
 {
     solar.mppt.kI = 0;
-    solar.mppt.kP = 3;
+    solar.mppt.kP = 20;
     solar.mppt.limitI = 0;
     solar.mppt.stateI = 0;
 }
@@ -153,21 +153,21 @@ void solar_mppt(void)
                     {
                         
                         if(solar.mppt.direction == SOLAR_MPPT_DIR_UP)
-                            solar.mppt.mppt_voltage += 0.4;
+                            solar.mppt.mppt_voltage += 0.2;
                         else
-                            solar.mppt.mppt_voltage -= 0.4;
+                            solar.mppt.mppt_voltage -= 0.2;
                     }
                     //if current power is less than previous go the other way
                     else
                     {
                         if(solar.mppt.direction == SOLAR_MPPT_DIR_UP)
                         {
-                            solar.mppt.mppt_voltage -= 0.4;
+                            solar.mppt.mppt_voltage -= 0.2;
                             solar.mppt.direction = SOLAR_MPPT_DIR_DOWN;
                         }
                         else
                         {
-                            solar.mppt.mppt_voltage += 0.4;
+                            solar.mppt.mppt_voltage += 0.2;
                             solar.mppt.direction = SOLAR_MPPT_DIR_UP;
                         }
                     }
@@ -185,13 +185,32 @@ void solar_mppt(void)
 
                 if (solar.mppt.deadtime == 0 && solar.adc.battery_voltage > SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER)
                 {
-                    solar_mppt_change_state(SOLAR_MPPT_STATE_FLOAT_CHARGING, 100);
+                    solar_mppt_change_state(SOLAR_MPPT_STATE_FLOAT_CHARGING, SOLAR_MPPT_DEADTIME_BETWEEN_MAX_AND_FLOAT);
                 }
             }
 
             if (solar.mppt.state == SOLAR_MPPT_STATE_FLOAT_CHARGING)
             {
                 float output = solar_mppt_PI_controller(SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL - solar.adc.battery_voltage);
+
+                //do ot wind up DCDC duty when solar panel voltage is dropping (panel is in the shade while driving)
+                //as increasing duty cycle wont increase the battery voltage anymore..
+                //TODO: do it with current sensing when the sensor is back and functioning
+                if (solar.adc.battery_voltage < SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL)
+                {
+                    if(solar.adc.solar_voltage < SOLAR_PANEL_VOLTAGE_MAX * 0.75)
+                    {
+                        if (output > 0)
+                        {
+                            output = 0;
+                            //stop I winding up
+                            solar.mppt.stateI = 0;
+                        }
+                        
+                    }
+
+                }
+
                 solar.dcdc.duty += output;
 
                 if (solar.adc.battery_voltage < SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT)
@@ -201,12 +220,12 @@ void solar_mppt(void)
                 }
                 else
                 {
-                    solar.mppt.float_charge_exit_counter = 1000;
+                    solar.mppt.float_charge_exit_counter = SOLAR_MPPT_FLOAT_CHARGING_EXIT_COUNTER;
                 }
 
                 if (solar.mppt.deadtime == 0 &&  solar.mppt.float_charge_exit_counter == 0)
                 {
-                    solar_mppt_change_state(SOLAR_MPPT_STATE_MAX_POWER, 100);
+                    solar_mppt_change_state(SOLAR_MPPT_STATE_MAX_POWER, SOLAR_MPPT_DEADTIME_BETWEEN_MAX_AND_FLOAT);
                 }
             }                        
         }
