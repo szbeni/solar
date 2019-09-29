@@ -1,9 +1,9 @@
-#Mppt Solar Charge Controller
+# Mppt Solar Charge Controller
 
 An MPPT solar charge controller for a caravan.
 Hardware, Firmware, Webapp for visualization
 
-Hardware main parts:
+## Hardware main parts:
  - STM32 MCU (bluepill STM32F103)
  - SZBK07 DCDC module (LM25116 DCDC driver chip and other electroics removed just power electronic parts used)
  - 250W solar panel 36V nominal voltage
@@ -14,7 +14,7 @@ Hardware main parts:
  - FAN for cooling power electronics
  - Bluetooth UART module for communnication
 
-Firmware:
+## Firmware:
 - Written in C
 - STCubeMX generated base project + user code
 - 50Hz controlling loop
@@ -23,14 +23,16 @@ Firmware:
 - simple ASCII UART protocol for communication
 - active PWM fan control when power is high
 
-Webapp:
+## Webapp:
 - Python3 based
 - Flexx UI
 - For visualization and active control of the firmware
 - Connection via bluetooth
 - Could be running on a raspberry PI
 
+![alt text](https://github.com/szbeni/solar/raw/master/res/solar_webapp.png "Webapp")
+
+
 TODO:
-Android app:
-- Same features as for webapp
-- Connect to the Firmware via Bluetooth
+Android app with same features as for webapp
+
