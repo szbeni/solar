@@ -12,18 +12,18 @@ class SolarData():
         
     }
     params = {
+        'MPPT Power': {'abbrev': 'MP', 'range': (0, 200)},
         'Battery Voltage': {'abbrev': 'BV', 'range': (10, 15) },
+        'DCDC Duty': {'abbrev': 'DD', 'range': (0, 100)},
         'Battery Current': {'abbrev': 'BC', 'range': (-10, 10)},
         'Solar Voltage': {'abbrev': 'SV', 'range': (0, 40)},
         'Solar Current': {'abbrev': 'SC', 'range': (-10, 10)},
         'Load Current': {'abbrev': 'LC', 'range': (-10, 10)},
         'DCDC Enable': {'abbrev': 'DE', 'range': (0, 1)},
-        'DCDC Duty': {'abbrev': 'DD', 'range': (0, 100)},
         'MPPT Enable': {'abbrev': 'ME', 'range': (0, 1)},
         'MPPT Deadtime': {'abbrev': 'MD', 'range': (0, 1000)},
         'MPPT Voltage': {'abbrev': 'MV', 'range': (0, 40)},
         'MPPT Direction': {'abbrev': 'MR', 'range': (0, 1)},
-        'MPPT Power': {'abbrev': 'MP', 'range': (0, 200)},
         'MPPT State': {'abbrev': 'MS', 'range': (0, 2)},
         'Load Enable': {'abbrev': 'LE', 'range': (0, 1)},
         'Fan Speed': {'abbrev': 'FS', 'range': (0, 255)},

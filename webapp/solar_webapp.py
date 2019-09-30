@@ -78,7 +78,7 @@ class MonitorView(flx.VBox):
 
 
         with flx.HSplit(flex=1):
-            with flx.GroupWidget(flex=1, title="Plot options"):  
+            with flx.GroupWidget(flex=1, title="Plot options", minsize=(270,0)):  
                     with flx.VBox():
                         self.buttons = {}
                         button_list = list(SolarData.commands.keys())
@@ -88,13 +88,14 @@ class MonitorView(flx.VBox):
                                 setattr(self.buttons[button_name],'button_action', button_name)
                                 self.buttons[button_name].reaction(self._on_button_pressed, 'pointer_click')
                                 self.buttons[button_name].reaction(self._on_button_down, 'pointer_down')
+                                self.buttons[button_name].reaction(self._on_button_up, 'pointer_up')
                                 flx.Widget(flex=1)
 
                         for i in range(0, self.plot_num):
                             with flx.HBox():
                                 self.plot_combobox[i] = flx.ComboBox(options=list(SolarData.params.keys()), editable=False, selected_index=i) 
                                 self.plot_combobox[i].reaction(self.combobox_changed, 'user_selected')
-                                self.plot_label[i] = flx.Label(text='Latest value:')
+                                self.plot_label[i] = flx.Label(text='Value:')
                                 self.plot_latest_val[i] = flx.Label(text='')
                                 flx.Widget(flex=1)
 
@@ -109,7 +110,9 @@ class MonitorView(flx.VBox):
 
             with flx.VBox(flex=4):
                 for i in range(0, self.plot_num):
-                    self.plot[i] = flx.PlotWidget(flex=1, style='width: 640px; height: 320px;',xdata=[], yrange=(0, 100),ylabel='Plot ' + str(i+1))
+                    self.plot[i] = flx.PlotWidget(flex=1, minsize=(600,0), style='width: 640px; height: 320px;',xdata=[], yrange=(0, 100),ylabel='Plot ' + str(i+1))
+                    self.update_plot_range(i)
+
 
     @flx.emitter
     def button_pressed(self, action):        
@@ -117,22 +120,34 @@ class MonitorView(flx.VBox):
 
     @flx.emitter
     def button_down(self, action):        
-        print("button down")
+        #print("button down")
         #return {'button_action': action}
+        pass
+
+    @flx.emitter
+    def button_up(self, action):
+        #print("button up")
+        #return {'button_action': action}
+        pass
 
     def _on_button_pressed(self, event):
         self.button_pressed(event.source.button_action)
 
     def _on_button_down(self, event):
-        self.button_pressed(event.source.button_action)
+        self.button_down(event.source.button_action)
+
+    def _on_button_up(self, event):
+        self.button_up(event.source.button_action)
 
     #clear data when plotting changed
     def combobox_changed(self, event):
         idx = self.plot_combobox.index(event.source)
+        self.update_plot_range(idx)
+
+    def update_plot_range(self,idx):
         self.plot[idx].set_data([], [])
         param = self.plot_combobox[idx].selected_key
         self.plot[idx].set_yrange(SolarData.params[param]['range'])
-
 
     @flx.action
     def update_info(self, info):
