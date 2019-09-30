@@ -110,7 +110,7 @@ class MonitorView(flx.VBox):
 
             with flx.VBox(flex=4):
                 for i in range(0, self.plot_num):
-                    self.plot[i] = flx.PlotWidget(flex=1, minsize=(600,0), style='width: 640px; height: 320px;',xdata=[], yrange=(0, 100),ylabel='Plot ' + str(i+1))
+                    self.plot[i] = flx.PlotWidget(flex=1, minsize=(270,0), style='width: 640px; height: 320px;',xdata=[], yrange=(0, 100),ylabel='Plot ' + str(i+1))
                     self.update_plot_range(i)
 
 
