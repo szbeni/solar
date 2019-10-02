@@ -220,6 +220,9 @@ class AlarmSystem:
     def start(self):
         for md in self.md:
             md.start()
+            #segmentation fault when trying to open socket from 2 different thread.. strange, make some testing
+            sleep(3)
+
         self.bot.start()
         self.uploader.start()
         
