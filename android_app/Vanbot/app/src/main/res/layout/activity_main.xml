@@ -13,29 +13,16 @@
             android:id="@+id/myLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Type here:" />
-
-        <EditText
-            android:id="@+id/entry"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/myLabel"
-            android:background="@android:drawable/editbox_background" />
-
-        <TextView
-            android:id="@+id/received"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/entry"
-            android:background="@android:drawable/editbox_background" />
+            android:layout_alignParentRight="true"
+            android:text="Status"/>
 
         <Button
             android:id="@+id/openButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/received"
             android:layout_marginLeft="10dip"
+            android:layout_below="@id/myLabel"
             android:text="Open" />
 
         <Button
@@ -54,11 +41,19 @@
             android:layout_toLeftOf="@id/sendButton"
             android:text="Close" />
 
+
+        <TextView
+            android:id="@+id/received"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/editbox_background"
+            android:layout_below="@id/openButton"/>
+
         <TextView
             android:id="@+id/values"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/sendButton"
+            android:layout_below="@id/received"
             android:background="@android:drawable/editbox_background" />
 
 
@@ -68,11 +63,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/values"/>
 
-        <com.jjoe64.graphview.GraphView
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart1"
+            android:layout_width="match_parent"
+            android:layout_height="800px"
+            android:layout_below="@+id/spinner" />
+
+        <!--<com.jjoe64.graphview.GraphView
             android:id="@+id/plot"
             android:layout_width="match_parent"
             android:layout_height="800px"
             android:layout_below="@id/spinner"/>
+            -->
 
 
 

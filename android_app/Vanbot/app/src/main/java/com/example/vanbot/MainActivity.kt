@@ -1,19 +1,21 @@
 package com.example.vanbot
 
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
+import android.content.Context
 import android.content.Intent
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import com.github.mikephil.charting.charts.LineChart
 import kotlinx.android.synthetic.main.activity_main.*
-import com.jjoe64.graphview.series.*
+
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -35,14 +37,38 @@ class MainActivity : AppCompatActivity() {
     private var mmDevice: BluetoothDevice? = null
     private var stopWorker = true
     private var selectedIndex = 0
+    //private lateinit var series1: LineGraphSeries<DataPoint>
+    private lateinit var chartHandler: ChartHandler
+    public lateinit var chart: LineChart
 
-    private lateinit var series1: LineGraphSeries<DataPoint>
+
+    init {
+        instance = this
+    }
+
+    companion object {
+        private var instance: MainActivity? = null
+
+        fun getInstance() : MainActivity? {
+            return instance
+        }
+    }
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
+        //setup spinner
+        var sd = SolarData(null)
+        var listOfParams = sd.getParamList()
 
+        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, listOfParams)
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner!!.adapter = aa
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -51,30 +77,12 @@ class MainActivity : AppCompatActivity() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedIndex = position
+                chartHandler.onPlottedParamChanged(selectedIndex)
             }
         }
 
-        var sd = SolarData(null)
-        var listOfParams = sd.getParamList()
-
-        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, listOfParams)
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner!!.adapter = aa
-
-        series1 = LineGraphSeries<DataPoint>()
-        plot.addSeries(series1)
-        plot.viewport.isScrollable = true
-        plot.viewport.isScalable = true
-        plot.viewport.isYAxisBoundsManual = true
-        plot.viewport.setMinY(0.0)
-        plot.viewport.setMaxY(100.0)
-        plot.viewport.isXAxisBoundsManual = true
-        plot.viewport.setMinX(0.0)
-        plot.viewport.setMaxX(100.0)
-        var labelRenderer = plot.gridLabelRenderer
-        labelRenderer?.setHumanRounding(true, true)
-
-
+        //chartHandler
+        chartHandler = ChartHandler()
 
         //Open Button
         openButton.setOnClickListener {
@@ -207,12 +215,7 @@ class MainActivity : AppCompatActivity() {
                                         val diff = sd.time.time - startTime.time
                                         val x:Double = diff.toDouble()
                                         val y:Double = sd.params[selectedIndex].value!!.toDouble()
-
-                                        sd.params[selectedIndex].max?.let { plot.viewport.setMaxY(it) }
-                                        sd.params[selectedIndex].min?.let { plot.viewport.setMinY(it) }
-
-                                        plot.viewport.setMaxX(x)
-                                        series1.appendData(DataPoint(x,y),false,300)
+                                        chartHandler.newData(x, y)
                                     }
                                 })
                             }

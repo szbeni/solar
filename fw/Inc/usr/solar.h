@@ -10,16 +10,17 @@
 
 #define SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE 11.0      //switch off load when the battery voltage is less than this
 #define SOLAR_BATTERY_LOAD_SWITCH_ON_VOLTAGE  12.5      //switch on the load when battery voltage is greater than this
+#define SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE  14.9    //switch load off if battery voltage is greater than this..
 #define SOLAR_BATTERY_LOAD_SWITCH_DEADTIME   5000       //do not switch load rapidly on and off
 
 #define SOLAR_MPPT_DUTY_STEP 1
 #define SOLAR_MPPT_DUTY_STEP_BIG 30
 
+
 #define SOLAR_MPPT_DEADTIME_DEFAULT 1000                //
 #define SOLAR_MPPT_DEADTIME_BETWEEN_MAX_AND_FLOAT 100   //
 
-//#define SOLAR_MPPT_FAN_ENABLE_POWER 35                  //when solar power is more that 35W enable the fan
-//#define SOLAR_MPPT_FAN_ENABLE_DEADTIME   1000           //deadtime
+#define SOLAR_MPPT_BATTERY_VOLTAGE_MAX 14.6               //start decreasing duty cycle if battery voltage is greater than, this as dont wat to damage devies
 
 #define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER   14.4    //when to enter to float charging mode from max power
 #define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL 14.2    //what is the float charging voltage (demand for the controller)
