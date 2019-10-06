@@ -55,8 +55,16 @@ void solar_main(void)
             //check if loads needs to be enabled or disabled
             if (solar.load_enable == 1)
             {
-                if (solar.adc.battery_voltage < SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE)
+                if(solar.adc.battery_voltage > SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE)
+                {
                     solar.load_enable = 0;
+                    solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                }
+                else if (solar.adc.battery_voltage < SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE)
+                {
+                    solar.load_enable = 0;
+                    solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                }
             }
             else if (solar.load_enable == 0)
             {

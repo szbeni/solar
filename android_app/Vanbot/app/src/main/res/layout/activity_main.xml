@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="TextFields,HardcodedText" >
+
+        <TextView
+            android:id="@+id/myLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Status"/>
+
+        <Button
+            android:id="@+id/openButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="10dip"
+            android:layout_below="@id/myLabel"
+            android:text="Open" />
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/openButton"
+            android:layout_toLeftOf="@id/openButton"
+            android:text="Send" />
+
+        <Button
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/sendButton"
+            android:layout_toLeftOf="@id/sendButton"
+            android:text="Close" />
+
+
+        <TextView
+            android:id="@+id/received"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/editbox_background"
+            android:layout_below="@id/openButton"/>
+
+        <TextView
+            android:id="@+id/values"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/received"
+            android:background="@android:drawable/editbox_background" />
+
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/values"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart1"
+            android:layout_width="match_parent"
+            android:layout_height="800px"
+            android:layout_below="@+id/spinner" />
+
+        <!--<com.jjoe64.graphview.GraphView
+            android:id="@+id/plot"
+            android:layout_width="match_parent"
+            android:layout_height="800px"
+            android:layout_below="@id/spinner"/>
+            -->
+
+
+
+    </RelativeLayout>
+</ScrollView>

@@ -180,8 +180,14 @@ void solar_mppt(void)
                     solar.mppt.power_average = power_average;
                 }
 
-                float output = solar_mppt_PI_controller(solar.mppt.mppt_voltage - solar.adc.solar_voltage);
-                solar.dcdc.duty -= output;
+                float output = solar_mppt_PI_controller(solar.adc.solar_voltage - solar.mppt.mppt_voltage);
+                
+                //start decreasing duty cycle if battery voltage is greater than max voltage as dont want to damage appliances
+                if (solar.adc.battery_voltage > SOLAR_MPPT_BATTERY_VOLTAGE_MAX)
+                    output = -SOLAR_MPPT_DUTY_STEP_BIG;
+
+                solar.dcdc.duty += output;
+
 
                 if (solar.mppt.deadtime == 0 && solar.adc.battery_voltage > SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER)
                 {
@@ -210,7 +216,12 @@ void solar_mppt(void)
                     }
 
                 }
-
+                //start decreasing duty cycle if battery voltage is greater than max voltage as dont want to damage appliances
+                else if (solar.adc.battery_voltage > SOLAR_MPPT_BATTERY_VOLTAGE_MAX)
+                {
+                    output = -SOLAR_MPPT_DUTY_STEP_BIG;
+                }
+                    
                 solar.dcdc.duty += output;
 
                 if (solar.adc.battery_voltage < SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT)
