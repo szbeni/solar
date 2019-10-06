@@ -98,11 +98,11 @@ class AlarmSystem:
         #last alarm state
         self.notify_alarm = False
         self.md_in = VanBotMotionDetector('inside')
-        self.md_out = VanBotMotionDetector('outside')
+        #self.md_out = VanBotMotionDetector('outside')
 
         self.md = []
         self.md.append(self.md_in)
-        self.md.append(self.md_out)
+        #self.md.append(self.md_out)
 
         self.streamer = VanBotHTTPStreamer(VanBotSettings.http_streamer)
         self.bot = Bot()

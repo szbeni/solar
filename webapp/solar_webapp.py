@@ -1,9 +1,12 @@
 from time import time
 import asyncio
+import signal
 from flexx import flx
 from solar_serial import SolarSerial
+from solar_serial_publisher import SolarSerialPublisher
 from solar_settings import SolarSettings
 from solar_data import SolarData
+
 
 class Relay(flx.Component):
     number_of_connections = flx.IntProp(settable=True)
@@ -177,9 +180,14 @@ class MonitorView(flx.VBox):
                 self.plot_latest_val[i].set_text(data[param_name])
                 self.plot[i].set_data(times, ydata)
 
-# Create global relay
+#solar serial
 solarSerial = SolarSerial(SolarSettings.serial_settings)
 solarSerial.start()
+
+#serial publisher
+solarSerialPublisher = SolarSerialPublisher(SolarSettings.serial_pub_settings)
+solarSerialPublisher.start()
+
 a = flx.App(Monitor)
 a.serve()
 flx.config.hostname = '0.0.0.0'
@@ -189,8 +197,10 @@ def main_loop():
     if not solarSerial.recvQueue.empty():
         sd = solarSerial.recvQueue.get()
         relay.new_data(sd)
+        solarSerialPublisher.new_data(str(sd).encode())
     asyncio.get_event_loop().call_later(1.0/SolarSettings.fps, main_loop)
 
 main_loop()
 flx.start()
 solarSerial.stop()
+solarSerialPublisher.stop()
