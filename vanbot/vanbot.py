@@ -20,6 +20,8 @@ from time import sleep
 from threading import Thread
 import os
 import cv2
+import gpsd
+
 from vanbot_motion_detector import VanBotMotionDetector
 from vanbot_settings import VanBotSettings
 from vanbot_file_upload import VanBotFileUpload
@@ -91,7 +93,8 @@ class AlarmSystem:
         {'name': 'rec start', 'description':'Start video recording'},
         {'name': 'rec stop', 'description':'Stop video recording'},
         {'name': 'rec send', 'description':'Send last recorded video, doesnt work'},
-        {'name': 'help', 'description':'Display help'},
+        {'name': 'gps', 'description':'Get GPS coordinates'},
+        {'name': 'help', 'description':'Display help'}
     ]
 
     def __init__(self):
@@ -197,6 +200,15 @@ class AlarmSystem:
                 if self.lastFilename is not None:
                     print("Sending file: {0}".format(self.lastFilename))
                     message.reply_document(open(self.lastFilename,'rb'), filename=self.lastFilename)
+
+            elif msg == 'gps':
+                try:
+                    gpsd.connect()
+                    packet = gpsd.get_current()
+                    s = "{0}, {1}\nhttps://www.google.com/maps/search/?api=1&query={0},{1}".format(packet.position()[0],packet.position()[1])
+                    message.reply_text(s)
+                except:
+                    message.reply_text("Cannot get gps coordinates")
 
             elif msg == 'help':
                 s = "Available commands:\n"

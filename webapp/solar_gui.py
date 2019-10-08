@@ -88,6 +88,5 @@ if __name__ == '__main__':
                     str_data += "{0: <5}".format(dictData[d])
                 else:
                     str_data += "{0: <5,.3f}".format(dictData[d])
-
                 i += 1
             app.new_data(str_data)
