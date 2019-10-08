@@ -138,9 +138,8 @@ void solar_comm_command_handler(uint8_t command);
 void solar_comm_send_values(void);
 
 
-
-
-void solar_ads1115_read(void);
+void solar_ads1115_reinit(void);
+uint8_t solar_ads1115_read(void);
 void solar_ads1115_reset_offsets(void);
 
 void solar_mppt(void);

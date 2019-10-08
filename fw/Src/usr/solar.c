@@ -35,7 +35,14 @@ void solar_main(void)
             solar.tick = 0;
 
             //read adc values
-            solar_ads1115_read();
+            if (solar_ads1115_read() != HAL_OK)
+            {
+                solar_ads1115_reinit();
+                solar.mppt.state = SOLAR_MPPT_STATE_OFF;
+                solar.dcdc.enable = 0;
+                solar.dcdc.duty = 0;
+            }
+
             solar_adc_get_values();
 
             //receive commands

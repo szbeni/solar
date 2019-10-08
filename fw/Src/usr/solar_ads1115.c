@@ -5,18 +5,45 @@
 
 extern I2C_HandleTypeDef hi2c2;
 
-void solar_ads1115_reset_offsets(void)
+void solar_ads1115_reinit(void)
 {
-	solar_ads1115_read();
-	//only for the curret chanels
-	for( uint8_t i = 1; i < 4; i++) 
-		solar.adc.ads1115_offset[i] = 16384 - solar.adc.ads1115_values[i];
+	HAL_I2C_DeInit(&hi2c2);
+	//Deinit should reset GPIOs to default state, but
+	//maybe need to pul GPIO to input to be sure
+	//GPIO_InitTypeDef GPIO_InitStruct = {0};
+	
+
+	HAL_Delay(10);
+	//CubeMX already set this up at startup
+	/*
+	hi2c2.Instance = I2C2;
+	hi2c2.Init.ClockSpeed = 100000;
+	hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
+	hi2c2.Init.OwnAddress1 = 0;
+	hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+	hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+	hi2c2.Init.OwnAddress2 = 0;
+	hi2c2.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+	hi2c2.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+	*/
+	HAL_I2C_Init(&hi2c2);
 }
 
-void solar_ads1115_read(void)
+void solar_ads1115_reset_offsets(void)
+{
+	if (solar_ads1115_read() == HAL_OK)
+	{
+		//only for the curret chanels
+		for( uint8_t i = 1; i < 4; i++) 
+			solar.adc.ads1115_offset[i] = 16384 - solar.adc.ads1115_values[i];
+	}
+}
+
+uint8_t solar_ads1115_read(void)
 {
     uint8_t ADSwrite[6];
     int16_t value;
+	HAL_StatusTypeDef status;
 
     for( uint8_t i = 0; i < 4; i++) 
     {
@@ -53,19 +80,35 @@ void solar_ads1115_read(void)
 			ADSwrite[2] = 0xE3; // 11100011
 
             //write config
-			HAL_I2C_Master_Transmit(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 3, 100);
+			status = HAL_I2C_Master_Transmit(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 3, 100);
+			if (status != HAL_OK)
+			{
+				return status;
+			}
 
             //select conv register
 			ADSwrite[0] = 0x00;
-			HAL_I2C_Master_Transmit(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 1, 100);
+			status = HAL_I2C_Master_Transmit(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 1, 100);
+			if (status != HAL_OK)
+			{
+				return status;
+			}
+
 			//wait for conv
             HAL_Delay(2);
             //read conv register
-			HAL_I2C_Master_Receive(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 2, 100);
+			status = HAL_I2C_Master_Receive(&hi2c2, ADS1115_ADDRESS<<1, ADSwrite, 2, 100);
+			if (status != HAL_OK)
+			{
+				return status;
+			}
+
 			value = (ADSwrite[0] << 8 | ADSwrite[1]);
 			if(value < 0 ) {
 				value = 0;
 			}
             solar.adc.ads1115_values[i] = value;
     }
+
+	return status;
 }
