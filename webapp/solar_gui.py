@@ -8,9 +8,11 @@ import signal
 from solar_data import SolarData
 import json
 from nanomsg import Socket, PUB, SUB, SUB_SUBSCRIBE
+import os
 
 class SolarTkApp(Thread):
     initialized = False
+    running = True
     def run(self):
         self.tk = Tk()
         self.tk.attributes('-zoomed', True)  # This just maximizes it so we can see the window. It's nothing to do with fullscreen.
@@ -20,35 +22,44 @@ class SolarTkApp(Thread):
         self.mainFrame = ttk.Frame(self.tk)
         self.mainFrame.pack()
 
-        #self.titleLabel = ttk.Label(self.tk, text="VanBot")
-        #self.titleLabel.config(font=("Courier", 22))
-        #self.titleLabel.pack()
+        self.titleLabel = ttk.Label(self.tk, text="VanBot")
+        self.titleLabel.config(font=("Courier", 22))
+        self.titleLabel.pack()
 
-        #self.labelClock = ttk.Label(self.tk, text="Time")
-        #self.labelClock.config(font=("Courier", 18))
-        #self.labelClock.pack()
-
-        self.label = ttk.Label(self.tk, text="<3 Annika <3", justify=LEFT)
-        self.label.config(font=("Courier", 12))
-        self.label.pack(side = LEFT)
+        self.labelClock = ttk.Label(self.tk, text="Time")
+        self.labelClock.config(font=("Courier", 18))
+        self.labelClock.pack()
         self.update_clock()
-        
+
+        self.label = ttk.Label(self.tk, text="<3 Annika <3")
+        self.label.config(font=("Courier", 12))
+        self.label.pack()
+
+        self.buttonShutdown = ttk.Button(self.tk, text="ShutDown", command=self.command_shutdown)
+        self.buttonShutdown.pack()
+
         self.initialized = True
+        self.running = True
         self.tk.mainloop()
 
     def sigint_handler(self, sig, frame):
         self.tk.quit()
         self.tk.update()
+        self.running = False
 
     def update_clock(self):
         now = time.strftime("%H:%M:%S")
-        #self.labelClock.configure(text=now)
+        self.labelClock.configure(text=now)
         self.tk.after(1000, self.update_clock)
 
     def new_data(self, data):
         if self.initialized:
             self.label.configure(text=data)
         pass
+
+    def command_shutdown(self):
+        print("shutdown")
+        os.system("sudo init 0") 
 
 if __name__ == '__main__':
     app = SolarTkApp()
@@ -59,14 +70,24 @@ if __name__ == '__main__':
     with Socket(SUB) as s:
         s.connect("tcp://localhost:5555".encode())
         s.set_string_option(SUB, SUB_SUBSCRIBE, ''.encode())
-        while True:
+        while app.running:
             data = s.recv().decode()
             data = data.replace("'", "\"")
             dictData = json.loads(data)
             str_data = ""
+            i = 1
             for d in dictData:
-                str_data += "{0}: {1}\n".format(d, dictData[d])
+                if (i % 2) == 1:
+                    if i != 1:
+                        str_data += '\n'
+                    str_data += "{0: <5}: ".format(d)
+                else:
+                    str_data += "\t{0: <5}: ".format(d)
+
+                if str(dictData[d]).isdigit():
+                    str_data += "{0: <5}".format(dictData[d])
+                else:
+                    str_data += "{0: <5,.3f}".format(dictData[d])
+
+                i += 1
             app.new_data(str_data)
-
-
-
