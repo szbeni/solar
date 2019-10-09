@@ -1,0 +1,10 @@
+ [Unit]
+ Description=Solar Webapp
+ After=multi-user.target
+
+ [Service]
+ Type=idle
+ ExecStart=/usr/bin/python3 /home/pi/solar/webapp/solar_webapp.py
+
+ [Install]
+ WantedBy=multi-user.target

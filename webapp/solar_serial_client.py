@@ -8,6 +8,6 @@ subSocket.subscribe(b'')
 msgSocket = Pair1(dial=SolarSettings.serial_msg_address, polyamorous=True)
 
 while True:
-    data = subSocket.recv(block)
+    data = subSocket.recv()
     sd = SolarData(from_byte=data)
     print(sd)

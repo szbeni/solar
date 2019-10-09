@@ -1,0 +1,10 @@
+ [Unit]
+ Description=Solar Serial - Connection to the charge controller
+ After=multi-user.target
+
+ [Service]
+ Type=idle
+ ExecStart=/home/pi/solar/webapp/start.sh
+
+ [Install]
+ WantedBy=multi-user.target

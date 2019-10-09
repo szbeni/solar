@@ -13,6 +13,7 @@ class SolarSerial(Thread):
         self.connected = False
         self.pubSocket = Pub0()
         self.msgSocket = Pair1(polyamorous=True)
+        self.firstDataReceived = False
 
     def openSerial(self):
         if self.serial is not None:
@@ -36,7 +37,9 @@ class SolarSerial(Thread):
     def handle_data(self, data):
         sd = SolarData(data)
         if sd.initalized:
-            print(data)
+            if self.firstDataReceived == False:
+                self.firstDataReceived = True
+                print(data)
             self.pubSocket.send(sd.to_byte())
         else:
             print("Cannot parse data: ", data)
