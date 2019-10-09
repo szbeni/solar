@@ -6,9 +6,10 @@ from threading import Thread
 import time
 import signal
 from solar_data import SolarData
+from solar_settings import SolarSettings
 import json
-from nanomsg import Socket, PUB, SUB, SUB_SUBSCRIBE
 import os
+from pynng import Sub0, Pair1
 
 class SolarTkApp(Thread):
     initialized = False
@@ -65,28 +66,30 @@ if __name__ == '__main__':
     app = SolarTkApp()
     # Set signal before starting
     signal.signal(signal.SIGINT, app.sigint_handler)
-
     app.start()
-    with Socket(SUB) as s:
-        s.connect("tcp://localhost:5555".encode())
-        s.set_string_option(SUB, SUB_SUBSCRIBE, ''.encode())
-        while app.running:
-            data = s.recv().decode()
-            data = data.replace("'", "\"")
-            dictData = json.loads(data)
-            str_data = ""
-            i = 1
-            for d in dictData:
-                if (i % 2) == 1:
-                    if i != 1:
-                        str_data += '\n'
-                    str_data += "{0: <5}: ".format(d)
-                else:
-                    str_data += "\t{0: <5}: ".format(d)
+    subSocket = Sub0(dial=SolarSettings.serial_pub_address)
+    subSocket.subscribe(b'solardata')
+    msgSocket = Pair1(dial=SolarSettings.serial_msg_address)
 
-                if str(dictData[d]).isdigit():
-                    str_data += "{0: <5}".format(dictData[d])
-                else:
-                    str_data += "{0: <5,.3f}".format(dictData[d])
-                i += 1
-            app.new_data(str_data)
+    while app.running:
+        data = subSocket.recv()
+        sd = SolarData(from_byte=data)
+        dictData = sd.as_dict()
+        str_data = ""
+        i = 1
+        for d in dictData:
+            if d == 'time':
+                continue
+            if (i % 2) == 1:
+                if i != 1:
+                    str_data += '\n'
+                str_data += "{0: <5}: ".format(d)
+            else:
+                str_data += "\t{0: <5}: ".format(d)
+
+            if str(dictData[d]).isdigit():
+                str_data += "{0: <5}".format(dictData[d])
+            else:
+                str_data += "{0: <5,.3f}".format(dictData[d])
+            i += 1
+        app.new_data(str_data)

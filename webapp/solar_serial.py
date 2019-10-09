@@ -1,8 +1,8 @@
 from threading import Thread
-from queue import Queue
 from solar_data import SolarData
 import serial
 from time import sleep
+from pynng import Pub0, Sub0, Pair1, TryAgain
 
 class SolarSerial(Thread):
     def __init__(self, settings):
@@ -11,8 +11,8 @@ class SolarSerial(Thread):
         self.settings = settings
         self.serial = None
         self.connected = False
-        self.recvQueue = Queue()
-        self.sendQueue = Queue()
+        self.pubSocket = Pub0()
+        self.msgSocket = Pair1(polyamorous=True)
 
     def openSerial(self):
         if self.serial is not None:
@@ -36,13 +36,17 @@ class SolarSerial(Thread):
     def handle_data(self, data):
         sd = SolarData(data)
         if sd.initalized:
-            self.recvQueue.put(sd)
+            print(data)
+            self.pubSocket.send(sd.to_byte())
         else:
             print("Cannot parse data: ", data)
         pass
 
     def run(self):
         self.running = True
+        self.pubSocket.listen(self.settings['address_pub'])
+        self.msgSocket.listen(self.settings['address_msg'])
+
         while self.running:
             self.openSerial()
             data = ""
@@ -58,12 +62,14 @@ class SolarSerial(Thread):
                         sliced = data.split('\r\n')
                         data = ''.join(sliced[1:])
                         self.handle_data(sliced[0])
-
-                while not self.sendQueue.empty():
-                    send_data = self.sendQueue.get()
+                try:
+                    send_data = self.msgSocket.recv(block=False)
                     self.serial.write(send_data)
+                except TryAgain:
+                    #no data
+                    pass
+
             sleep(5)
-                    
 
 if __name__ == "__main__":
     from solar_settings import SolarSettings

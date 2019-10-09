@@ -2,11 +2,15 @@ from time import time
 import asyncio
 import signal
 from flexx import flx
-from solar_serial import SolarSerial
-from solar_serial_publisher import SolarSerialPublisher
 from solar_settings import SolarSettings
 from solar_data import SolarData
+from pynng import Pair1, Sub0, TryAgain
 
+
+#serial data in and out
+subSocket = Sub0(dial=SolarSettings.serial_pub_address)
+subSocket.subscribe("solardata")
+msgSocket = Pair1(dial=SolarSettings.serial_msg_address, polyamorous=True)
 
 class Relay(flx.Component):
     number_of_connections = flx.IntProp(settable=True)
@@ -58,7 +62,7 @@ class Monitor(flx.PyWidget):
         button_list = list(SolarData.commands.keys())
         if action in button_list:
             keystroke = SolarData.commands[action]['keystroke'].encode()
-            solarSerial.sendQueue.put(keystroke)
+            msgSocket.send(keystroke)
 
     def _do_work(self, *events):
         etime = time() + len(events)
@@ -180,27 +184,19 @@ class MonitorView(flx.VBox):
                 self.plot_latest_val[i].set_text(data[param_name])
                 self.plot[i].set_data(times, ydata)
 
-#solar serial
-solarSerial = SolarSerial(SolarSettings.serial_settings)
-solarSerial.start()
-
-#serial publisher
-solarSerialPublisher = SolarSerialPublisher(SolarSettings.serial_pub_settings)
-solarSerialPublisher.start()
-
 a = flx.App(Monitor)
 a.serve()
 flx.config.hostname = '0.0.0.0'
 flx.config.port = 49190
 
 def main_loop():
-    if not solarSerial.recvQueue.empty():
-        sd = solarSerial.recvQueue.get()
+    try:
+        data = subSocket.recv(block=False)  
+        sd = SolarData(from_byte=data)
         relay.new_data(sd)
-        solarSerialPublisher.new_data(str(sd).encode())
+    except TryAgain:
+        pass
     asyncio.get_event_loop().call_later(1.0/SolarSettings.fps, main_loop)
 
 main_loop()
 flx.start()
-solarSerial.stop()
-solarSerialPublisher.stop()
