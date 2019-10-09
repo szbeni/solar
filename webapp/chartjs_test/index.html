@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>  
+  <head>
+      <script src="./Chart.js"></script>
+  </head>
+  <body>
+    <p><span></span></p>
+    <canvas id="line-chart" width="800" height="450"></canvas>
+    <script>
+        var data = {
+                labels: [],
+                datasets: [{
+                    label: 'Battery Voltage',
+                    backgroundColor: 'red',
+					          borderColor: 'red',
+                    data: [],
+                    borderWidth: 0,
+                    fill: false
+                }]
+            }
+
+        var ctx = document.getElementById('line-chart');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                         max: 16,
+                         min: 10,
+                        stepSize: 0.5
+                        }                    
+                      }]
+                }
+            }
+        });
+        </script>
+    <script>
+      var sub = new WebSocket('ws://127.0.0.1:5555', [ 'pub.sp.nanomsg.org' ])      
+      sub.onclose = function eh(){}
+      sub.onerror = function(){}
+      sub.onopen = function(){}
+      sub.onmessage = function message(e) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            data = reader.result
+            if (data.includes("solardata: "))
+            {
+              data = data.replace("solardata: ", "").replace(/'/g,"\"")
+              json_data = JSON.parse(data)
+
+              myChart.data.labels.push(json_data['time'])
+              myChart.data.datasets[0].data.push(json_data['Battery Voltage'])
+              if (myChart.data.labels.length > 30)
+              {
+                myChart.data.labels.shift()
+                myChart.data.datasets[0].data.shift()
+              }
+              myChart.update()
+
+              document.querySelector('span').textContent = JSON.stringify(json_data)
+            }            
+        }
+        reader.readAsText(e.data);
+      }
+
+      
+    </script>
+  </body>
+</html>
