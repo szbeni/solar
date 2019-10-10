@@ -22,6 +22,7 @@ import os
 import cv2
 import gpsd
 from pynng import Sub0, Timeout
+import json
 
 from vanbot_motion_detector import VanBotMotionDetector
 from vanbot_settings import VanBotSettings
@@ -214,15 +215,20 @@ class AlarmSystem:
 
             elif msg == 'solar info':
                 try:
-                    subSocket = Sub0(dial=VanBotSettings.solar_system['address_pub'])
+                    subSocket = Sub0(dial=VanBotSettings.solar_system['address_pub'], recv_timeout=1000)
                     subSocket.subscribe(b'')
                     try:
-                        data = subSocket.recv_timeout(1000)
-                        message.reply_text(data.decode())
+                        data = subSocket.recv()
+                        data_str = data.decode().replace("solardata: ", "").replace("'", "\"")
+                        data = json.loads(data_str)
+                        reply_str = ""
+                        for d in data:
+                            reply_str += "{0}: {1}\n".format(d, data[d])
+                        message.reply_text(reply_str)
                     except Timeout:
-                        message.reply_text("Failed to get solar data, receive timeout")    
-                except:
-                    message.reply_text("Failed to get solar data")
+                        message.reply_text("Failed to get solar data, receive timeout")
+                except Exception as e:
+                    message.reply_text("Failed to get solar data: {0}".format(e))
 
             elif msg == 'help':
                 s = "Available commands:\n"
