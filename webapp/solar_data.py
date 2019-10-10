@@ -86,13 +86,14 @@ class SolarData():
         return retval
 
     def from_byte(self, data):
-        str_data = data.decode('utf-8').replace("'", "\"")
+        str_data = data.decode('utf-8')
         if str_data.startswith("solardata: "):
             dict_data = json.loads(str_data.replace("solardata: ", ""))
             self.from_dict(dict_data)
 
     def to_byte(self):
-        return ('solardata: ' + str(self.as_dict())).encode('utf-8')
+        data_json_str = 'solardata: ' + json.dumps(self.as_dict())
+        return (data_json_str.encode('utf-8'))
 
 if __name__ == "__main__":
     data = SolarData()
