@@ -95,6 +95,7 @@ class AlarmSystem:
         {'name': 'rec stop', 'description':'Stop video recording'},
         {'name': 'rec send', 'description':'Send last recorded video, doesnt work'},
         {'name': 'gps', 'description':'Get GPS coordinates'},
+        {'name': 'solar info', 'description':'Get info of the solar system'},
         {'name': 'help', 'description':'Display help'}
     ]
 
