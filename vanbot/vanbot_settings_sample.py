@@ -31,3 +31,8 @@ class VanBotSettings:
         'port': 8000,
         'template_folder': '/home/beni/solar/vanbot/templates'
     }
+
+    solar_system = {
+        'address_pub': 'ws://127.0.0.1:5555',
+        'address_msg': 'ws://127.0.0.1:5556'
+    }

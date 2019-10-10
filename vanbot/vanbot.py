@@ -21,6 +21,7 @@ from threading import Thread
 import os
 import cv2
 import gpsd
+from pynng import Sub0, Timeout
 
 from vanbot_motion_detector import VanBotMotionDetector
 from vanbot_settings import VanBotSettings
@@ -209,6 +210,18 @@ class AlarmSystem:
                     message.reply_text(s)
                 except:
                     message.reply_text("Cannot get gps coordinates")
+
+            elif msg == 'solar info':
+                try:
+                    subSocket = Sub0(dial=VanBotSettings.solar_system['address_pub'])
+                    subSocket.subscribe(b'')
+                    try:
+                        data = subSocket.recv_timeout(1000)
+                        message.reply_text(data.decode())
+                    except Timeout:
+                        message.reply_text("Failed to get solar data, receive timeout")    
+                except:
+                    message.reply_text("Failed to get solar data")
 
             elif msg == 'help':
                 s = "Available commands:\n"
