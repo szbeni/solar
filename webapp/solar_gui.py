@@ -30,9 +30,14 @@ class SolarTkApp(Thread):
         self.labelClock = ttk.Label(self.tk, text="Time")
         self.labelClock.config(font=("Courier", 18))
         self.labelClock.pack()
+
         self.update_clock()
 
-        self.label = ttk.Label(self.tk, text="<3 Annika <3")
+        self.userLabel = ttk.Label(self.tk, text="<3 Annika <3")
+        self.userLabel.config(font=("Courier", 12))
+        self.userLabel.pack()
+
+        self.label = ttk.Label(self.tk, text="")
         self.label.config(font=("Courier", 12))
         self.label.pack()
 
