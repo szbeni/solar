@@ -2,6 +2,7 @@ from threading import Thread
 from solar_data import SolarData
 import serial
 from time import sleep
+import time
 from pynng import Pub0, Sub0, Pair1, TryAgain
 
 class SolarSerial(Thread):
@@ -14,6 +15,7 @@ class SolarSerial(Thread):
         self.pubSocket = Pub0()
         self.msgSocket = Pair1(polyamorous=True)
         self.firstDataReceived = False
+        self.lastDataTime = time.time()
 
     def openSerial(self):
         if self.serial is not None:
@@ -32,6 +34,7 @@ class SolarSerial(Thread):
             self.serial = None
 
     def stop(self):
+        self.closeSerial()
         self.running = False
 
     def handle_data(self, data):
@@ -40,6 +43,7 @@ class SolarSerial(Thread):
             if self.firstDataReceived == False:
                 self.firstDataReceived = True
                 print(data)
+            self.lastDataTime = time.time()
             self.pubSocket.send(sd.to_byte())
         else:
             print("Cannot parse data: ", data)
@@ -53,7 +57,11 @@ class SolarSerial(Thread):
         while self.running:
             self.openSerial()
             data = ""
-            while self.connected:          
+            while self.connected:
+                delta_t = time.time() - self.lastDataTime
+                if delta_t > self.settings['no_data_restart_time']:
+                    print("No recevied data for more than {0} seconds".format(delta_t))
+                    self.stop()
                 try:
                     received_data = self.serial.readline().decode()
                 except:

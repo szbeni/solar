@@ -33,7 +33,7 @@ class SolarTkApp(Thread):
 
         self.update_clock()
 
-        self.userLabel = ttk.Label(self.tk, text="<3 Annika <3")
+        self.userLabel = ttk.Label(self.tk, text="Custom Text")
         self.userLabel.config(font=("Courier", 12))
         self.userLabel.pack()
 

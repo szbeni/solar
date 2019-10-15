@@ -6,5 +6,6 @@ class SolarSettings:
         'address_pub': 'ws://127.0.0.1:5555',
         'address_msg': 'ws://127.0.0.1:5556',
         'port': '/dev/rfcomm0',
-        'baud': 9600
+        'baud': 9600,
+        'no_data_restart_time': 10
     }
