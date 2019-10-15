@@ -46,7 +46,7 @@ class SolarSerial(Thread):
             if self.firstDataReceived == False:
                 self.firstDataReceived = True
                 print(data)
-            #self.lastDataTime = time.time()
+            self.lastDataTime = time.time()
             self.pubSocket.send(sd.to_byte())
         else:
             print("Cannot parse data: ", data)
