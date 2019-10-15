@@ -32,6 +32,7 @@ class SolarSerial(Thread):
         if self.serial is not None:
             self.serial.close()
             self.serial = None
+        self.connected = False
 
     def stop(self):
         self.closeSerial()
