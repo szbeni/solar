@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo timeout 15s bluetoothctl scan on
+sudo timeout 5s bluetoothctl scan on
 sudo bluetoothctl info 00:0D:18:3A:67:89
 sudo bluetoothctl pair 00:0D:18:3A:67:89
 sudo bluetoothctl trust 00:0D:18:3A:67:89
