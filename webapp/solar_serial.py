@@ -32,10 +32,13 @@ class SolarSerial(Thread):
         if self.serial is not None:
             self.serial.close()
             self.serial = None
+        self.connected = False
 
     def stop(self):
         self.closeSerial()
         self.running = False
+        self.pubSocket.close()
+        self.msgSocket.close()
 
     def handle_data(self, data):
         sd = SolarData(data)
@@ -62,6 +65,7 @@ class SolarSerial(Thread):
                 if delta_t > self.settings['no_data_restart_time']:
                     print("No recevied data for more than {0} seconds".format(delta_t))
                     self.stop()
+                    break
                 try:
                     received_data = self.serial.readline().decode()
                 except:
@@ -81,6 +85,7 @@ class SolarSerial(Thread):
                     pass
 
             sleep(5)
+        print("Exiting")
 
 if __name__ == "__main__":
     from solar_settings import SolarSettings

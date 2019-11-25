@@ -1,0 +1,22 @@
+/proc/*
+/sys/*
+/dev/*
+/boot/*
+/tmp/*
+/run/*
+/mnt/*
+/home/pi/backup/*
+
+.Trashes
+._.Trashes
+.fseventsd
+.Spotlight-V100
+.DS_Store
+.AppleDesktop
+.AppleDB
+Network Trash Folder
+Temporary Items
+
+.bash_history
+/etc/fake-hwclock.data
+/var/lib/rpimonitor/stat/
