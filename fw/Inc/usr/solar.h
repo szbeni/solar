@@ -8,10 +8,12 @@
 #define SOLAR_PANEL_VOLTAGE_MAX 36.0                    //nominal solar panel voltage
 #define SOLAR_PANEL_VOLTAGE_MIN 20.0                    //switch on charging when solar voltage is greater than this
 
-#define SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE 11.0      //switch off load when the battery voltage is less than this
+#define SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE 11.6      //switch off load when the battery voltage is less than this
 #define SOLAR_BATTERY_LOAD_SWITCH_ON_VOLTAGE  12.5      //switch on the load when battery voltage is greater than this
-#define SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE  14.9    //switch load off if battery voltage is greater than this..
+#define SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE  14.9  //switch load off if battery voltage is greater than this..
+#define SOLAR_BATTERY_LOAD_SWITCH_COUNTER_THRESHOLD 100 //The voltage thresholds needs to be 100 times within to make a load switch action (prevent false battery voltage reading, ex.: sudden load)
 #define SOLAR_BATTERY_LOAD_SWITCH_DEADTIME   5000       //do not switch load rapidly on and off
+
 
 #define SOLAR_MPPT_DUTY_STEP 1
 #define SOLAR_MPPT_DUTY_STEP_BIG 30
@@ -100,6 +102,7 @@ typedef struct
     solar_dcdc_struct dcdc;
     solar_mppt_struct mppt;
     uint8_t load_enable;
+    uint16_t load_enable_counter;
     uint16_t load_enable_deadtime;
     uint8_t load_enable_user;
     uint8_t fan_speed;

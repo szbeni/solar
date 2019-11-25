@@ -20,8 +20,8 @@ static float solar_adc_get_solar_current(uint16_t raw)
     //ACS712 30A version 2.5V + 0.066 Volt/Amps (bi directional)
 
     float scaled;
-    //scaled = ((int16_t)raw - 16384 + solar.adc.ads1115_offset[2] ) * ADS1115_SCALER / 0.066 * CALIB_SOLAR_CURRENT_GAIN;
-    scaled = ((int16_t)raw -16384 + solar.adc.ads1115_offset[2] ) * ADS1115_SCALER / 0.388885 * 1.8 * CALIB_SOLAR_CURRENT_GAIN;
+    scaled = ((int16_t)raw - 16384 + solar.adc.ads1115_offset[2] ) * ADS1115_SCALER / 0.066 * CALIB_SOLAR_CURRENT_GAIN;
+    //scaled = ((int16_t)raw -16384 + solar.adc.ads1115_offset[2] ) * ADS1115_SCALER / 0.388885 * 1.8 * CALIB_SOLAR_CURRENT_GAIN;
     return scaled;
 }
 

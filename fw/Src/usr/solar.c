@@ -62,25 +62,54 @@ void solar_main(void)
             //check if loads needs to be enabled or disabled
             if (solar.load_enable == 1)
             {
+                //check for overvoltage
                 if(solar.adc.battery_voltage > SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE)
                 {
-                    solar.load_enable = 0;
-                    solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                    //voltage need to be over for more than threshold cycles
+                    if(++solar.load_enable_counter >= SOLAR_BATTERY_LOAD_SWITCH_COUNTER_THRESHOLD)
+                    {
+                        solar.load_enable_counter = 0;
+                        solar.load_enable = 0;
+                        solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                    }
                 }
+                //check for undervoltage
                 else if (solar.adc.battery_voltage < SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE)
                 {
-                    solar.load_enable = 0;
-                    solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                    //voltage needs to be under for more than threshold cycles
+                    if(++solar.load_enable_counter >= SOLAR_BATTERY_LOAD_SWITCH_COUNTER_THRESHOLD)
+                    {
+                        solar.load_enable_counter = 0;
+                        solar.load_enable = 0;
+                        solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                    }
+                }
+                else
+                {
+                    solar.load_enable_counter = 0;
                 }
             }
             else if (solar.load_enable == 0)
             {
-                if (solar.adc.battery_voltage > SOLAR_BATTERY_LOAD_SWITCH_ON_VOLTAGE && solar.load_enable_deadtime == 0)
+                //Check if voltage is above to switch back the load
+                if (solar.adc.battery_voltage > SOLAR_BATTERY_LOAD_SWITCH_ON_VOLTAGE && solar.adc.battery_voltage < SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE)
                 {
-                    solar.load_enable = 1;
-                    solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                    if(solar.load_enable_deadtime == 0)
+                    {
+                        if(++solar.load_enable_counter >= SOLAR_BATTERY_LOAD_SWITCH_COUNTER_THRESHOLD)
+                        {
+                            solar.load_enable_counter = 0;
+                            solar.load_enable = 1;
+                            solar.load_enable_deadtime = SOLAR_BATTERY_LOAD_SWITCH_DEADTIME;
+                        }
+                    }
+                }
+                else
+                {
+                    solar.load_enable_counter = 0;
                 }
             }
+
             //enable/disable load
             solar_load_enable(solar.load_enable_user && solar.load_enable);
             
