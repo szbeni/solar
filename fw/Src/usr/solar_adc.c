@@ -17,8 +17,9 @@ static float solar_adc_get_solar_voltage(uint16_t raw)
 
 static float solar_adc_get_solar_current(uint16_t raw)
 {
-    //ACS712 30A version 2.5V + 0.066 Volt/Amps (bi directional)
+    //ACS712 30A version 2.5V + 0.100 Volt/Amps (bi directional)
 
+    //Sent wrong ACS712 sensor probably it is the 20A version... thats why gain is not right
     float scaled;
     scaled = ((int16_t)raw - 16384 + solar.adc.ads1115_offset[2] ) * ADS1115_SCALER / 0.066 * CALIB_SOLAR_CURRENT_GAIN;
     //scaled = ((int16_t)raw -16384 + solar.adc.ads1115_offset[2] ) * ADS1115_SCALER / 0.388885 * 1.8 * CALIB_SOLAR_CURRENT_GAIN;
