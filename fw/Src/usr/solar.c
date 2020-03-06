@@ -62,6 +62,12 @@ void solar_main(void)
             //check if loads needs to be enabled or disabled
             if (solar.load_enable == 1)
             {
+                //set at what voltage the batter shuts off
+                float switch_off_threshold_voltage = SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE;
+                //if there is a high load decrease the shut off voltage (for diesel heater startup)
+                if (solar.adc.battery_current > SOLAR_BATTERY_LOAD_SWITCH_OFF_HIGH_LOAD_CURRENT)
+                    switch_off_threshold_voltage = SOLAR_BATTERY_LOAD_SWITCH_OFF_HIGH_LOAD_VOLTAGE;
+
                 //check for overvoltage
                 if(solar.adc.battery_voltage > SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE)
                 {
@@ -74,7 +80,7 @@ void solar_main(void)
                     }
                 }
                 //check for undervoltage
-                else if (solar.adc.battery_voltage < SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE)
+                else if (solar.adc.battery_voltage < switch_off_threshold_voltage)
                 {
                     //voltage needs to be under for more than threshold cycles
                     if(++solar.load_enable_counter >= SOLAR_BATTERY_LOAD_SWITCH_COUNTER_THRESHOLD)

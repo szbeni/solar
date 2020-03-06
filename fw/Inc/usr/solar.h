@@ -8,6 +8,8 @@
 #define SOLAR_PANEL_VOLTAGE_MAX 36.0                    //nominal solar panel voltage
 #define SOLAR_PANEL_VOLTAGE_MIN 20.0                    //switch on charging when solar voltage is greater than this
 
+#define SOLAR_BATTERY_LOAD_SWITCH_OFF_HIGH_LOAD_CURRENT 5.0  //what current considered as high load
+#define SOLAR_BATTERY_LOAD_SWITCH_OFF_HIGH_LOAD_VOLTAGE 11.2 //switch off load when the battery voltage is less than this when there is a high load
 #define SOLAR_BATTERY_LOAD_SWITCH_OFF_VOLTAGE 11.6      //switch off load when the battery voltage is less than this
 #define SOLAR_BATTERY_LOAD_SWITCH_ON_VOLTAGE  12.5      //switch on the load when battery voltage is greater than this
 #define SOLAR_BATTERY_LOAD_SWITCH_DANGER_VOLTAGE  14.9  //switch load off if battery voltage is greater than this..
