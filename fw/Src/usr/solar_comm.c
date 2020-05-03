@@ -35,14 +35,14 @@ void solar_comm_command_handler(uint8_t command)
             break;
             
         case COMMAND_PWM_DOWN:
-                solar.dcdc.duty -= 10;
+                solar.dcdc.duty -= 100;
                 if(solar.dcdc.duty<0)
                     solar.dcdc.duty = 0;
 
             break;
 
         case COMMAND_PWM_UP:
-                solar.dcdc.duty += 10;
+                solar.dcdc.duty += 100;
                 if(solar.dcdc.duty>SOLAR_DCDC_MAX_DUTY)
                     solar.dcdc.duty = SOLAR_DCDC_MAX_DUTY;
                 

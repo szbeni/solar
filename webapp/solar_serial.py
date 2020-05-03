@@ -22,10 +22,11 @@ class SolarSerial(Thread):
             self.serial.close()
             self.serial = None
         try:
-            self.serial = serial.Serial(self.settings['port'], self.settings['baud'], timeout=0)
+            self.serial = serial.Serial(self.settings['port'], self.settings['baud'], timeout=5000)
             self.connected = True
-        except:
+        except Exception as e:
             print("Error opening serial port:", self.settings['port'])
+            print("Exception: {0}".format(e))
             self.connected = False
         
     def closeSerial(self):
@@ -68,8 +69,8 @@ class SolarSerial(Thread):
                     break
                 try:
                     received_data = self.serial.readline().decode()
-                except:
-                    #print("Failed to read data")
+                except Exception as e:
+                    print("Failed to read data: {0}".format(e))
                     received_data = None
                 if received_data:
                     data += received_data
@@ -83,7 +84,7 @@ class SolarSerial(Thread):
                 except TryAgain:
                     #no data
                     pass
-
+                sleep(0.1)
             sleep(5)
         print("Exiting")
 

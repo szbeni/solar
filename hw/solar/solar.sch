@@ -1,5 +1,4 @@
 EESchema Schematic File Version 4
-LIBS:solar-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
@@ -1722,4 +1721,239 @@ Wire Wire Line
 Connection ~ 11100 -1300
 Text GLabel 11350 -1300 2    50   Input ~ 0
 ADC_SOLAR_CURR
+NoConn ~ 900  -4750
+$Comp
+L fet:IR25601S U?
+U 1 1 5EAE1D90
+P 1250 -5000
+F 0 "U?" H 1250 -4319 50  0000 C CNN
+F 1 "IR25601S" H 1250 -4410 50  0000 C CNN
+F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 1250 -5000 50  0001 C CIN
+F 3 "https://www.infineon.com/dgdl/Infineon-IR25601S-DataSheet-v01_00-EN.pdf?fileId=5546d46269e1c019016a4a762d794ab8" H 1250 -5000 50  0001 C CNN
+	1    1250 -5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_FET:IRF540N Q?
+U 1 1 5EB0D0C5
+P 2600 -5900
+F 0 "Q?" H 2806 -5854 50  0000 L CNN
+F 1 "IRF2204" H 2806 -5945 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 2850 -5975 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf2204.pdf" H 2600 -5900 50  0001 L CNN
+	1    2600 -5900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_FET:IRF540N Q?
+U 1 1 5EB0D0CB
+P 2600 -4250
+F 0 "Q?" H 2806 -4204 50  0000 L CNN
+F 1 "IRF2204" H 2806 -4295 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 2850 -4325 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf2204.pdf" H 2600 -4250 50  0001 L CNN
+	1    2600 -4250
+	1    0    0    -1  
+$EndComp
+Text GLabel 2200 -6400 0    50   Input ~ 0
+V_SOLAR
+Wire Wire Line
+	2200 -6400 2700 -6400
+Wire Wire Line
+	2700 -6400 2700 -6100
+$Comp
+L power:GND #PWR?
+U 1 1 5EB0D0D4
+P 2700 -3950
+F 0 "#PWR?" H 2700 -4200 50  0001 C CNN
+F 1 "GND" H 2705 -4123 50  0000 C CNN
+F 2 "" H 2700 -3950 50  0001 C CNN
+F 3 "" H 2700 -3950 50  0001 C CNN
+	1    2700 -3950
+	1    0    0    -1  
+$EndComp
+Connection ~ 2700 -5200
+Wire Wire Line
+	2700 -5700 2700 -5200
+Wire Wire Line
+	2700 -5200 2700 -4450
+$Comp
+L pspice:INDUCTOR L?
+U 1 1 5EB0D0DE
+P 3700 -5200
+F 0 "L?" H 3700 -4985 50  0000 C CNN
+F 1 "22uH" H 3700 -5076 50  0000 C CNN
+F 2 "" H 3700 -5200 50  0001 C CNN
+F 3 "~" H 3700 -5200 50  0001 C CNN
+	1    3700 -5200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2700 -5200 3450 -5200
+$Comp
+L Device:CP C?
+U 1 1 5EB0D0E5
+P 4350 -4700
+F 0 "C?" H 4468 -4654 50  0000 L CNN
+F 1 "470uF" H 4468 -4745 50  0000 L CNN
+F 2 "" H 4388 -4850 50  0001 C CNN
+F 3 "~" H 4350 -4700 50  0001 C CNN
+	1    4350 -4700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3950 -5200 4350 -5200
+Wire Wire Line
+	4350 -5200 4350 -4850
+Wire Wire Line
+	2700 -4050 2700 -4000
+Wire Wire Line
+	2700 -4000 4350 -4000
+Connection ~ 2700 -4000
+Wire Wire Line
+	2700 -4000 2700 -3950
+Wire Wire Line
+	4350 -4550 4350 -4000
+Wire Wire Line
+	4350 -5200 5150 -5200
+Connection ~ 4350 -5200
+Text GLabel 5150 -5200 2    50   Input ~ 0
+DCDC_VOUT
+Wire Wire Line
+	2400 -4700 2400 -4250
+Wire Wire Line
+	1550 -4800 1850 -4800
+Wire Wire Line
+	2400 -4800 2400 -5200
+Wire Wire Line
+	2400 -5200 2700 -5200
+$Comp
+L Device:D D?
+U 1 1 5EB86F1C
+P 1500 -5850
+F 0 "D?" H 1500 -6066 50  0000 C CNN
+F 1 "D" H 1500 -5975 50  0000 C CNN
+F 2 "" H 1500 -5850 50  0001 C CNN
+F 3 "~" H 1500 -5850 50  0001 C CNN
+	1    1500 -5850
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1250 -5850 1250 -5500
+Wire Wire Line
+	1250 -5850 1350 -5850
+$Comp
+L Device:CP C?
+U 1 1 5EBBD03A
+P 1850 -5000
+F 0 "C?" H 1968 -4954 50  0000 L CNN
+F 1 "10uF" H 1968 -5045 50  0000 L CNN
+F 2 "" H 1888 -5150 50  0001 C CNN
+F 3 "~" H 1850 -5000 50  0001 C CNN
+	1    1850 -5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1850 -4850 1850 -4800
+Connection ~ 1850 -4800
+Wire Wire Line
+	1850 -4800 2400 -4800
+Wire Wire Line
+	1850 -5150 1850 -5300
+Wire Wire Line
+	1850 -5850 1650 -5850
+Wire Wire Line
+	1550 -5300 1850 -5300
+Connection ~ 1850 -5300
+Wire Wire Line
+	1850 -5300 1850 -5850
+Wire Wire Line
+	1250 -4550 1250 -4500
+Connection ~ 1250 -4500
+Wire Wire Line
+	1250 -4500 1250 -4350
+$Comp
+L power:GND #PWR?
+U 1 1 5EC10636
+P 1250 -4350
+F 0 "#PWR?" H 1250 -4600 50  0001 C CNN
+F 1 "GND" H 1255 -4523 50  0000 C CNN
+F 2 "" H 1250 -4350 50  0001 C CNN
+F 3 "" H 1250 -4350 50  0001 C CNN
+	1    1250 -4350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+12V #PWR?
+U 1 1 5EC12D4B
+P 400 -6000
+F 0 "#PWR?" H 400 -6150 50  0001 C CNN
+F 1 "+12V" H 415 -5827 50  0000 C CNN
+F 2 "" H 400 -6000 50  0001 C CNN
+F 3 "" H 400 -6000 50  0001 C CNN
+	1    400  -6000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	400  -5850 1250 -5850
+Connection ~ 1250 -5850
+Wire Wire Line
+	400  -6000 400  -5850
+$Comp
+L Device:C C?
+U 1 1 5EC29FD9
+P 400 -5700
+F 0 "C?" V 148 -5700 50  0000 C CNN
+F 1 "100nF" V 239 -5700 50  0000 C CNN
+F 2 "" H 438 -5850 50  0001 C CNN
+F 3 "~" H 400 -5700 50  0001 C CNN
+	1    400  -5700
+	-1   0    0    1   
+$EndComp
+Connection ~ 400  -5850
+$Comp
+L power:GND #PWR?
+U 1 1 5EC6B55B
+P 400 -5450
+F 0 "#PWR?" H 400 -5700 50  0001 C CNN
+F 1 "GND" H 405 -5623 50  0000 C CNN
+F 2 "" H 400 -5450 50  0001 C CNN
+F 3 "" H 400 -5450 50  0001 C CNN
+	1    400  -5450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	400  -5450 400  -5550
+$Comp
+L Device:R R?
+U 1 1 5EC9E4EF
+P 2200 -5900
+F 0 "R?" V 1993 -5900 50  0000 C CNN
+F 1 "22" V 2084 -5900 50  0000 C CNN
+F 2 "" V 2130 -5900 50  0001 C CNN
+F 3 "~" H 2200 -5900 50  0001 C CNN
+	1    2200 -5900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2350 -5900 2400 -5900
+Wire Wire Line
+	1550 -5200 2050 -5200
+Wire Wire Line
+	2050 -5200 2050 -5900
+$Comp
+L Device:R R?
+U 1 1 5ECD2833
+P 2200 -4700
+F 0 "R?" V 2300 -4700 50  0000 C CNN
+F 1 "22" V 2400 -4700 50  0000 C CNN
+F 2 "" V 2130 -4700 50  0001 C CNN
+F 3 "~" H 2200 -4700 50  0001 C CNN
+	1    2200 -4700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2050 -4700 1550 -4700
+Wire Wire Line
+	2350 -4700 2400 -4700
 $EndSCHEMATC
