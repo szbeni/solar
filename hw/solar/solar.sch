@@ -751,8 +751,6 @@ Wire Wire Line
 	1850 2400 1700 2400
 Text GLabel 1700 2400 0    50   Input ~ 0
 SWITCH_LOAD
-Text GLabel 3400 3300 2    50   Input ~ 0
-SWITCH_DCDC
 Wire Wire Line
 	7300 1050 7400 1050
 $Comp
@@ -1565,7 +1563,7 @@ PWM_DCDC
 Wire Wire Line
 	7400 750  7150 750 
 Text GLabel 7150 950  0    50   Input ~ 0
-PWM_DCDC_N
+PWM_DCDC_SD
 Wire Wire Line
 	7150 950  7400 950 
 $Comp
@@ -1723,17 +1721,6 @@ Text GLabel 11350 -1300 2    50   Input ~ 0
 ADC_SOLAR_CURR
 NoConn ~ 900  -4750
 $Comp
-L fet:IR25601S U?
-U 1 1 5EAE1D90
-P 1250 -5000
-F 0 "U?" H 1250 -4319 50  0000 C CNN
-F 1 "IR25601S" H 1250 -4410 50  0000 C CNN
-F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 1250 -5000 50  0001 C CIN
-F 3 "https://www.infineon.com/dgdl/Infineon-IR25601S-DataSheet-v01_00-EN.pdf?fileId=5546d46269e1c019016a4a762d794ab8" H 1250 -5000 50  0001 C CNN
-	1    1250 -5000
-	1    0    0    -1  
-$EndComp
-$Comp
 L Transistor_FET:IRF540N Q?
 U 1 1 5EB0D0C5
 P 2600 -5900
@@ -1867,11 +1854,6 @@ Wire Wire Line
 Connection ~ 1850 -5300
 Wire Wire Line
 	1850 -5300 1850 -5850
-Wire Wire Line
-	1250 -4550 1250 -4500
-Connection ~ 1250 -4500
-Wire Wire Line
-	1250 -4500 1250 -4350
 $Comp
 L power:GND #PWR?
 U 1 1 5EC10636
@@ -1956,4 +1938,30 @@ Wire Wire Line
 	2050 -4700 1550 -4700
 Wire Wire Line
 	2350 -4700 2400 -4700
+$Comp
+L Driver_FET:IR2104 U?
+U 1 1 5EBC4ADE
+P 1250 -5000
+F 0 "U?" H 1250 -4319 50  0000 C CNN
+F 1 "IR2104" H 1250 -4410 50  0000 C CNN
+F 2 "" H 1250 -5000 50  0001 C CIN
+F 3 "https://www.infineon.com/dgdl/ir2104.pdf?fileId=5546d462533600a4015355c7c1c31671" H 1250 -5000 50  0001 C CNN
+	1    1250 -5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1250 -4550 1250 -4500
+Connection ~ 1250 -4500
+Wire Wire Line
+	1250 -4500 1250 -4350
+Text GLabel 3400 3300 2    50   Input ~ 0
+PWM_DCDC_SD
+Text GLabel 750  -5000 0    50   Input ~ 0
+PWM_DCDC
+Wire Wire Line
+	750  -5000 950  -5000
+Text GLabel 750  -4900 0    50   Input ~ 0
+PWM_DCDC_SD
+Wire Wire Line
+	750  -4900 950  -4900
 $EndSCHEMATC
