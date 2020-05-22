@@ -33,7 +33,7 @@ void solar_ads1115_reset_offsets(void)
 {
 	if (solar_ads1115_read() == HAL_OK)
 	{
-		//only for the curret chanels
+		//only for the current channels
 		for( uint8_t i = 1; i < 4; i++) 
 			solar.adc.ads1115_offset[i] = 16384 - solar.adc.ads1115_values[i];
 	}

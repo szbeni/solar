@@ -84,7 +84,7 @@ class SolarSerial(Thread):
                 except TryAgain:
                     #no data
                     pass
-                sleep(0.1)
+                sleep(0.01)
             sleep(5)
         print("Exiting")
 

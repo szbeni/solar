@@ -68,8 +68,8 @@ void solar_dcdc_enable(uint8_t enable)
 
 void solar_dcdc_set_duty(int16_t duty)
 {
-    if (duty > 4900)
-        duty = 4900;
+    if (duty > 4800)
+        duty = 4800;
     else if (duty < 0)
         duty = 0;
 
@@ -84,6 +84,6 @@ void solar_dcdc_set_duty(int16_t duty)
         htim1.Instance->BDTR |= TIM_BDTR_MOE;
     }
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty);
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, duty+50);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, duty+100);
     
 }
