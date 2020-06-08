@@ -4,7 +4,7 @@
 //LSB - 0.000125V  = FSR / 32768
 #define ADS1115_SCALER 4.096 / 32768.0
 
-#define SOLAR_DCDC_MAX_DUTY 5000                        //maximum duty cycle amount, set in CubeMX timer settings
+#define SOLAR_DCDC_MAX_DUTY 2500    //50%               //maximum duty cycle amount, set in CubeMX timer settings
 #define SOLAR_PANEL_VOLTAGE_MAX 36.0                    //nominal solar panel voltage
 #define SOLAR_PANEL_VOLTAGE_MIN 20.0                    //switch on charging when solar voltage is greater than this
 
@@ -24,11 +24,13 @@
 #define SOLAR_MPPT_DEADTIME_DEFAULT 1000                //
 #define SOLAR_MPPT_DEADTIME_BETWEEN_MAX_AND_FLOAT 100   //
 
-#define SOLAR_MPPT_BATTERY_VOLTAGE_MAX 14.6               //start decreasing duty cycle if battery voltage is greater than, this as dont wat to damage devies
+#define SOLAR_MPPT_BATTERY_VOLTAGE_MAX 14.4                 //start decreasing duty cycle if battery voltage is greater than, this as dont wat to damage devies
+#define SOLAR_MPPT_BATTERY_VOLTAGE_CRITICAL 14.5           //switch off the PMosfet after the DCDC converter to protect batteries
 
-#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER   14.4    //when to enter to float charging mode from max power
-#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL 14.2    //what is the float charging voltage (demand for the controller)
-#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT    13.9    //when to leave float charging mode and go back to max power mode
+
+#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_ENTER   14.3    //when to enter to float charging mode from max power
+#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_CONTROL 14.1    //what is the float charging voltage (demand for the controller)
+#define SOLAR_MPPT_FLOAT_CHARGING_VOLTAGE_EXIT    13.8    //when to leave float charging mode and go back to max power mode
 #define SOLAR_MPPT_FLOAT_CHARGING_EXIT_COUNTER  1000      //only exit when battery voltage is below for more than 1000 cycles
 
 //Modify it by hand after measured everything
@@ -82,6 +84,7 @@ typedef struct
     float solar_voltage;
     float solar_current;
     float battery_voltage;
+    float battery_voltage_avg;
     float battery_current;
     float load_voltage;
     float load_current;

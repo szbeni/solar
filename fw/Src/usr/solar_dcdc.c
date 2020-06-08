@@ -36,6 +36,8 @@ void solar_dcdc_enable(uint8_t enable)
             GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
             HAL_GPIO_Init(PWM_DCDC_SD_GPIO_Port, &GPIO_InitStruct);
 
+
+            HAL_GPIO_WritePin(PWM_DCDC_ENABLE_GPIO_Port, PWM_DCDC_ENABLE_Pin, GPIO_PIN_SET);
             //for now disable the low side FET for good
             //GPIO_InitStruct.Pin = PWM_DCDC_N_Pin;
             //GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -48,9 +50,9 @@ void solar_dcdc_enable(uint8_t enable)
         else
         {
             solar_dcdc_set_duty(0);
-
             HAL_GPIO_WritePin(PWM_DCDC_GPIO_Port, PWM_DCDC_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(PWM_DCDC_SD_GPIO_Port, PWM_DCDC_SD_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(PWM_DCDC_ENABLE_GPIO_Port, PWM_DCDC_ENABLE_Pin, GPIO_PIN_RESET);
 
             GPIO_InitStruct.Pin = PWM_DCDC_Pin;
             GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -84,6 +86,6 @@ void solar_dcdc_set_duty(int16_t duty)
         htim1.Instance->BDTR |= TIM_BDTR_MOE;
     }
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty);
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, duty+100);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, duty+70);
     
 }

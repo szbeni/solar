@@ -55,11 +55,24 @@ static float solar_adc_get_load_current(uint16_t raw)
 }
 
 
+// One-time calculations (can be pre-calculated at compile-time and loaded with constants)
+//DecayFactor = exp(-2.0 * PI * CutoffFrequency / SampleRate);
+//AmplitudeFactor = (1.0 - DecayFactor);
+//single pole low-pass filter:
+static inline float filter_one_pole_low_pass(float input, float current, float decay, float amplitude)
+{
+	current *= decay;
+    current += amplitude * input;
+    return current;
+}
+
+
 void solar_adc_get_values(void)
 {
     //internal ADC
     solar.adc.battery_voltage = solar_adc_get_battery_voltage(solar.adc.raw_values[2]);
-    solar.adc.load_voltage = solar.adc.battery_voltage;
+    solar.adc.battery_voltage_avg = filter_one_pole_low_pass(solar.adc.battery_voltage_avg, solar.adc.battery_voltage, 0.3, 0.7);
+    solar.adc.load_voltage = solar.adc.battery_voltage_avg;
 
     //external 16 bit ADS1115
     solar.adc.solar_voltage = solar_adc_get_solar_voltage(solar.adc.ads1115_values[0]);
@@ -68,3 +81,5 @@ void solar_adc_get_values(void)
     solar.adc.battery_current = solar_adc_get_battery_current(solar.adc.ads1115_values[3]);
     
 }
+
+

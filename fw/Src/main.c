@@ -599,6 +599,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(SWITCH_LOAD_GPIO_Port, SWITCH_LOAD_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(PWM_DCDC_ENABLE_GPIO_Port, PWM_DCDC_ENABLE_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : BUILTIN_LED_Pin */
   GPIO_InitStruct.Pin = BUILTIN_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -612,6 +615,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(SWITCH_LOAD_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PWM_DCDC_ENABLE_Pin */
+  GPIO_InitStruct.Pin = PWM_DCDC_ENABLE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(PWM_DCDC_ENABLE_GPIO_Port, &GPIO_InitStruct);
 
 }
 

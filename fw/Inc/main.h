@@ -72,6 +72,8 @@ void Error_Handler(void);
 #define PWM_DCDC_GPIO_Port GPIOA
 #define PWM_DCDC_SD_Pin GPIO_PIN_9
 #define PWM_DCDC_SD_GPIO_Port GPIOA
+#define PWM_DCDC_ENABLE_Pin GPIO_PIN_10
+#define PWM_DCDC_ENABLE_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

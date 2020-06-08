@@ -72,7 +72,7 @@ void solar_comm_command_handler(uint8_t command)
 
 void solar_comm_send_values(void)
 {
-    snprintf((char *)(solar.send_buffer), SOLAR_SEND_BUFFER_SIZE, "SV%fBV%fSC%fBC%fLC%fDD%fDE%dMD%dMV%fMR%dMP%fME%dMS%dLE%dFS%d%EC%d\r\n", solar.adc.solar_voltage, solar.adc.battery_voltage, solar.adc.solar_current, solar.adc.battery_current, solar.adc.load_current, (float)solar.dcdc.duty/50.0, solar.dcdc.enable, solar.mppt.deadtime, solar.mppt.mppt_voltage, solar.mppt.direction, solar.mppt.prev_solar_power, solar.mppt.enable, solar.mppt.state, solar.load_enable&&solar.load_enable_user, solar.fan_speed, solar.error);
+    snprintf((char *)(solar.send_buffer), SOLAR_SEND_BUFFER_SIZE, "SV%fBV%fSC%fBC%fLC%fDD%fDE%dMD%dMV%fMR%dMP%fME%dMS%dLE%dFS%d%EC%d\r\n", solar.adc.solar_voltage, solar.adc.battery_voltage_avg, solar.adc.solar_current, solar.adc.battery_current, solar.adc.load_current, (float)solar.dcdc.duty/50.0, solar.dcdc.enable, solar.mppt.deadtime, solar.mppt.mppt_voltage, solar.mppt.direction, solar.mppt.prev_solar_power, solar.mppt.enable, solar.mppt.state, solar.load_enable&&solar.load_enable_user, solar.fan_speed, solar.error);
     HAL_UART_Transmit(&huart1,solar.send_buffer,strlen((char*)(solar.send_buffer)),0xFFFF);   
 }
 
