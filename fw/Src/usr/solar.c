@@ -53,17 +53,18 @@ void solar_main(void)
             solar_mppt();
 
             //check overvoltage from Solar controller, if DCDC switch if faulty switch off the Pmosfet fior 5 sec
+            uint8_t dcdc_safety_enable = 1;
             static uint16_t overvoltage_counter = 0;
             if (solar.adc.battery_voltage_avg > SOLAR_MPPT_BATTERY_VOLTAGE_CRITICAL) overvoltage_counter = 500;
             if(overvoltage_counter > 0)
             {
                 //switch back on after the timeout
                 overvoltage_counter--;
-                solar.dcdc.enable = 0;
+                dcdc_safety_enable = 0;
             }
             
             solar_dcdc_set_duty(solar.dcdc.duty);
-            solar_dcdc_enable(solar.dcdc.enable); 
+            solar_dcdc_enable(dcdc_safety_enable && solar.dcdc.enable); 
 
             
 
