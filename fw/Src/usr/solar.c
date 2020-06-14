@@ -61,6 +61,7 @@ void solar_main(void)
                 //switch back on after the timeout
                 overvoltage_counter--;
                 dcdc_safety_enable = 0;
+                solar.dcdc.duty = 0;
             }
             
             solar_dcdc_set_duty(solar.dcdc.duty);
