@@ -4,6 +4,8 @@ An MPPT solar charge controller for a caravan.
 Hardware, Firmware, Webapp for visualization
 
 ## Hardware main parts:
+ - [Schematic PDF download](https://github.com/szbeni/solar/raw/master/hw/solar/solar.pdf)
+ - No PCB design so far, just a working prototype on breadboard
  - STM32 MCU (bluepill STM32F103)
  - SZBK07 DCDC module (LM25116 DCDC driver chip and other electroics removed just power electronic parts used)
  - 250W solar panel 36V nominal voltage
@@ -36,6 +38,6 @@ Hardware, Firmware, Webapp for visualization
 ![alt text](https://github.com/szbeni/solar/raw/master/res/solar_webapp.png "Webapp")
 
 
-TODO:
-Android app with same features as for webapp
+## Android app
+ - There is an initial release of the android app, it is working but not perfect
 
